@@ -16,7 +16,7 @@ import com.nurlan1507.task_manager_mobile.ui.theme.Task_manager_mobileTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        val viewModel: UserViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+        val userViewModel: UserViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
         super.onCreate(savedInstanceState)
         setContent {
             Task_manager_mobileTheme {
@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+                    Navigation(userViewModel = userViewModel)
                 }
             }
         }

@@ -24,12 +24,13 @@ import com.nurlan1507.task_manager_mobile.feature_users.presentation.components.
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.components.SignInCarousel
 import com.nurlan1507.task_manager_mobile.ui.theme.Typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignInScreen(window: WindowSize){
+fun SignInScreen(userViewModel: UserViewModel, window: WindowSize){
     val ctx = LocalContext.current
     Column(modifier = Modifier
         .fillMaxWidth()

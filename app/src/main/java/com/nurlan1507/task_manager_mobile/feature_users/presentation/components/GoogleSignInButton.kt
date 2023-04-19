@@ -62,7 +62,6 @@ fun SignInButton(text :String,
                 tint = Color.Unspecified
             )
             Text(modifier = Modifier.fillMaxWidth(), text = text, textAlign = TextAlign.Center, style = Typography.bodyMedium, color = Color.Black)
-
         }
     }
 }

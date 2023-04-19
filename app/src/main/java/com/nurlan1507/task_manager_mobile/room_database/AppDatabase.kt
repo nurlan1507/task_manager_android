@@ -1,5 +1,6 @@
 package com.nurlan1507.task_manager_mobile.room_database
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -36,9 +37,7 @@ abstract class TaskManagerDatabase: RoomDatabase() {
                 return tempInstance
             }
             synchronized(this) {
-                val instance = Room.databaseBuilder(context.applicationContext,
-                    TaskManagerDatabase::class.java, DATABASE_NAME).fallbackToDestructiveMigration()
-                    .build()
+                val instance = Room.databaseBuilder(context.applicationContext, TaskManagerDatabase::class.java, DATABASE_NAME).build()
                 INSTANCE = instance
                 return instance
             }
