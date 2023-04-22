@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.MainScreen
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.sign_in.SignInScreen
 import com.nurlan1507.task_manager_mobile.utils.Screen
@@ -16,6 +17,9 @@ fun Navigation(userViewModel: UserViewModel){
     NavHost(navController = navController, startDestination = Screen.SignInScreen.route){
         composable(Screen.SignInScreen.route){
             SignInScreen(userViewModel = userViewModel, window = window, navController = navController)
+        }
+        composable(Screen.MainScreen.route){
+            MainScreen(navController = navController, windowSize =window )
         }
     }
 }

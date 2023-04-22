@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,29 +48,34 @@ import com.nurlan1507.task_manager_mobile.ui.theme.Typography
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController: NavController){
     val ctx = LocalContext.current
     val activity = LocalContext.current as Activity
 
+    val state = userViewModel.state.value
+    if(state.apiCallResult == 200){
+        navController.navigate(Screen.MainScreen.route){
+            popUpTo(0)
+        }
+        Toast.makeText(ctx, "SUccess", Toast.LENGTH_LONG).show()
+    }else if(state.apiCallResult == 400){
+        Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
+    }else{
+        Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
+    }
 
-//    var resultCode by userViewModel.resultCode.
 
     var startGoogleSignInForResult = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()){result->
         if (result.resultCode == Activity.RESULT_OK) {
             val intent = result.data
             Log.d("googleAuth","asdasd")
-                Toast.makeText(ctx,"asdasd", Toast.LENGTH_LONG).show()
-                Log.d("googleAuth","asdasd")
                 if(result.data!=null){
                     val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
                     if(task.isSuccessful){
                         userViewModel.onEvent(event = UserEvent.GoogleSignInEvent(task.result.id.toString(), task.result.displayName.toString(), task.result.email.toString()))}else{
-                        Toast.makeText(ctx,"asdasd", Toast.LENGTH_LONG).show()
                     }
                 }
-
         }
     }
 
