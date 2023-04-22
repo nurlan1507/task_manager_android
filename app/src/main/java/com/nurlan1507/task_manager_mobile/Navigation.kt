@@ -15,7 +15,7 @@ fun Navigation(userViewModel: UserViewModel){
     val window = rememberWindowSize()
     NavHost(navController = navController, startDestination = Screen.SignInScreen.route){
         composable(Screen.SignInScreen.route){
-            SignInScreen(userViewModel = userViewModel, window = window)
+            SignInScreen(userViewModel = userViewModel, window = window, navController = navController)
         }
     }
 }

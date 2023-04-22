@@ -1,5 +1,6 @@
 package com.nurlan1507.task_manager_mobile.feature_users.presentation.components
 
+import android.annotation.SuppressLint
 import android.widget.ImageView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
@@ -43,6 +44,7 @@ import com.nurlan1507.task_manager_mobile.ui.theme.Typography
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SignInCarousel(){

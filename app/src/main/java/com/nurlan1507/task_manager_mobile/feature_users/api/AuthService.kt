@@ -6,7 +6,7 @@ import retrofit2.http.POST
 
 
 interface AuthService {
-    @POST("api/googleSignIn")
+    @POST("/api/users/googleSignIn")
     suspend fun googleSignIn(@Body body: GoogleSignInRequestBody): Response<AuthApiResponse>
 
 }

@@ -91,4 +91,7 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:1.4.0-alpha04"
 
 
+
+    //googleAuthDep
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 }

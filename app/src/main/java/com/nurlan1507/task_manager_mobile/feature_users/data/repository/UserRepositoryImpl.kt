@@ -2,10 +2,13 @@ package com.nurlan1507.task_manager_mobile.feature_users.data.repository
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
+import com.google.android.gms.auth.api.Auth
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthApiResponse
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthService
 import com.nurlan1507.task_manager_mobile.feature_users.api.GoogleSignInRequestBody
+import com.nurlan1507.task_manager_mobile.feature_users.api.UserAuthJson
 import com.nurlan1507.task_manager_mobile.feature_users.data.UserDao
 import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 import com.nurlan1507.task_manager_mobile.feature_users.domain.repository.UserRepository
@@ -28,9 +31,10 @@ class UserRepositoryImpl(private val dao:UserDao, private val remoteDataSource: 
 //        dao.insertUser(user)
     }
 
-    override suspend fun googleSignIn(google_id_token:String): NetworkResult<AuthApiResponse> {
+    override suspend fun googleSignIn(google_id_token:String,username:String, email:String): NetworkResult<AuthApiResponse> {
+        Log.d("googleAuth","processing auth")
         return saveApiCall {
-            remoteDataSource.googleSignIn(google_id_token)
+            remoteDataSource.googleSignIn(google_id_token,username,email)
         }
     }
 }

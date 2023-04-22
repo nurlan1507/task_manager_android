@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 class RestService {
     companion object{
-        val BASE_URL = "http://localhost:3000/"
+        val BASE_URL = "http://3.83.68.211:3000/"
         val okHttpClient = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build()
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()

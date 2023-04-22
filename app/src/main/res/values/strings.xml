@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">task_manager_mobile</string>
+    <string name="google_cloud_server_client_id">828297641879-cm4bbcg2bcbumck5spdtph4a1g9llhog.apps.googleusercontent.com</string>
 </resources>
