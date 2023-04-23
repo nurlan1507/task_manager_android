@@ -19,7 +19,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,16 +55,20 @@ fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController
     val ctx = LocalContext.current
     val activity = LocalContext.current as Activity
 
-    val state = userViewModel.state.value
-    if(state.apiCallResult == 200){
-        navController.navigate(Screen.MainScreen.route){
-            popUpTo(0)
+    val state by remember(userViewModel){
+        userViewModel.state
+    }
+    LaunchedEffect(state.apiCallResult){
+        if(state.apiCallResult == 200){
+            navController.navigate(Screen.MainScreen.route){
+                launchSingleTop = true
+            }
+            Toast.makeText(ctx, "SUccess", Toast.LENGTH_SHORT).show()
+        }else if(state.apiCallResult == 400){
+            Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
+        }else{
+            Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
         }
-        Toast.makeText(ctx, "SUccess", Toast.LENGTH_LONG).show()
-    }else if(state.apiCallResult == 400){
-        Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
-    }else{
-        Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
     }
 
 
