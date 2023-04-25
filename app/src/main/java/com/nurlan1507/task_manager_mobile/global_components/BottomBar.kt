@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
@@ -32,47 +35,29 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.CurrentBottomSheetLayout
+import kotlinx.coroutines.launch
 
 @Composable
-fun <T> BottomNavigationBar(
-    navigationIcon: @Composable() (() -> Unit)? = null,
-    actionData: List<T> = emptyList(),
-    action: @Composable RowScope.() -> Unit = {}
+fun BottomNavigationBar(
+    showProfile:()->Unit,
+    showSearch:()->Unit,
+    showNotification:()->Unit,
+    showAddTask:()->Unit,
+
 ){
     val bottomBarHeight = 70.dp
-//    BottomAppBar(
-//        containerColor = Color(0xFF5E97FF),
-//        contentColor = Color.White,
-//        actions = {
-//            IconButton(onClick = { /* doSomething() */ }) {
-//                Icon(Icons.Filled.List, contentDescription = "Drawer")
-//            }
-//            IconButton(onClick = { /* doSomething() */ }) {
-//                Icon(
-//                    Icons.Filled.Notifications,
-//                    contentDescription = "Notifications",
-//                )
-//            }
-//        },
-//        floatingActionButton = {
-//            FloatingActionButton(
-//                modifier = Modifier.offset(y=(-19).dp),
-//                onClick = { /* do something */ },
-//                shape = CircleShape,
-//                containerColor = BottomAppBarDefaults.bottomAppBarFabColor,
-//                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation()
-//            ) {
-//                Icon(Icons.Filled.Add, "Add a task")
-//            }
-//        }
-//    )
     Box (modifier = Modifier.wrapContentSize()){
         BottomAppBar(
-            modifier = Modifier.height(bottomBarHeight).fillMaxWidth(),
+            modifier = Modifier
+                .height(bottomBarHeight)
+                .fillMaxWidth(),
             containerColor = Color(0xFF5E97FF),
             contentColor = Color.White,
         ) {
@@ -82,14 +67,14 @@ fun <T> BottomNavigationBar(
                     .padding(horizontal = 1.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { /* Handle Home click */ }) {
+                IconButton(onClick = {showProfile()}) {
                     Icon(Icons.Default.List, contentDescription = "Home")
                 }
                 Row(){
-                    IconButton(onClick = { /* Handle Settings click */ }) {
+                    IconButton(onClick = { showNotification()}) {
                         Icon(Icons.Default.Notifications, contentDescription = "Settings")
                     }
-                    IconButton(onClick = { /* Handle Settings click */ }) {
+                    IconButton(onClick = { showSearch()}) {
                         Icon(Icons.Default.Search, contentDescription = "Settings")
                     }
                 }
@@ -100,8 +85,16 @@ fun <T> BottomNavigationBar(
         FloatingActionButton(
             shape = CircleShape,
             containerColor = Color(0xFF5E97FF),
-            onClick = { /* Handle FloatingActionButton click */ },
-            modifier = Modifier.align(Alignment.BottomCenter).size(70.dp).offset(y = -(bottomBarHeight/2)).border(width = 6.dp, color = Color.Transparent, shape = RoundedCornerShape(bottomBarHeight/2))
+            onClick = { showAddTask() },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .size(70.dp)
+                .offset(y = -(bottomBarHeight / 2))
+                .border(
+                    width = 6.dp,
+                    color = Color.Transparent,
+                    shape = RoundedCornerShape(bottomBarHeight / 2)
+                )
         ) {
             Icon(Icons.Default.Add, contentDescription = "Add", tint = Color.White )
         }

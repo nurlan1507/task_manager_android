@@ -63,7 +63,6 @@ fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController
             navController.navigate(Screen.MainScreen.route){
                 launchSingleTop = true
             }
-            Toast.makeText(ctx, "SUccess", Toast.LENGTH_SHORT).show()
         }else if(state.apiCallResult == 400){
             Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
         }else{
