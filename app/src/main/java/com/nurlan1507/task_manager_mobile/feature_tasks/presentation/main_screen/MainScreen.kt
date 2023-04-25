@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_scree
 
 import android.annotation.SuppressLint
 import android.util.Log
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -36,6 +37,7 @@ import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.BottomSheetLayoutState
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.BottomSheet
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.BottomSheetContent
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
@@ -65,27 +67,26 @@ fun MainScreen(navController: NavController,windowSize: WindowSize){
         BottomSheetLayoutType.NOTIFICATIONS ->{
             bottomSheetState = bottomSheetState.copy(layout = {BottomSheetContent()})
             scope.launch {
-                sheetState.show()
+                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(1000))
             }
         }
         BottomSheetLayoutType.SEARCH ->{
             Log.d("layoutChanged","ssad")
             bottomSheetState = bottomSheetState.copy(layout = {BottomSheetContent()})
             scope.launch {
-                sheetState.show()
+                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(1000))
             }
         }
-        BottomSheetLayoutType.PROFILE ->{
-            bottomSheetState = bottomSheetState.copy(layout = {BottomSheetContent()})
+        BottomSheetLayoutType.PROFILE -> {
+            bottomSheetState = bottomSheetState.copy(layout = { MainBottomSheetLayout() })
             scope.launch {
-                sheetState.show()
+                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(1000))
             }
         }
         else -> bottomSheetState = bottomSheetState.copy(layout = {BottomSheetContent()})
     }
 
     ModalBottomSheetLayout(
-        sheetBackgroundColor = Color.Gray,
         content = {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
