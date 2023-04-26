@@ -24,9 +24,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -52,11 +55,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.R
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.MainScreenDynamicNavigationOption
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.MainScreenNavigationOption
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainBottomSheetLayout() {
+fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {
     val navigationOptions = listOf(
         MainScreenDynamicNavigationOption(MainScreenNavigationOption.IncomingTasks, 1),
         MainScreenDynamicNavigationOption(MainScreenNavigationOption.TodayTasks, 3),
@@ -64,11 +70,11 @@ fun MainBottomSheetLayout() {
         MainScreenDynamicNavigationOption(MainScreenNavigationOption.Filter, 0)
     )
     var showProjects by remember { mutableStateOf(false) }
-
+    val state = tasksViewModel.tasksState
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(vertical = 5.dp, horizontal = 20.dp)
+            .padding(vertical = 5.dp)
     ) {
         Box(
             modifier = Modifier
@@ -87,6 +93,7 @@ fun MainBottomSheetLayout() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
+                    .padding(horizontal = 20.dp)
             ) {
                 Row(modifier = Modifier.align(Alignment.CenterStart)) {
                     Box(
@@ -98,13 +105,14 @@ fun MainBottomSheetLayout() {
                     Spacer(modifier = Modifier.width(15.dp))
                     Column {
                         Text(
+                            style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.SemiBold),
                             text = "Имя пользователя",
-                            fontSize = 21.sp,
-                            fontWeight = FontWeight.SemiBold
+
                         )
                         Text(
                             text = "почта пользователя@mail",
                             fontSize = 14.sp,
+                            style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.SemiBold),
                             fontWeight = FontWeight.Light
                         )
                     }
@@ -122,43 +130,50 @@ fun MainBottomSheetLayout() {
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
+                        .background(if(it.navOption==state.value.currentCategory)Color.LightGray else Color.Transparent)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple()
                         ) {
+                            tasksViewModel.onEvent(TasksEvent.ChangeCategory(it.navOption))
+
                         }) {
-                        Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                            Icon(
-                                painter = painterResource(id = it.navOption.icon),
-                                contentDescription = "Google",
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .padding(start = 4.dp),
-                                tint = Color.Unspecified
+                        Box(modifier = Modifier.padding(horizontal = 20.dp).fillMaxHeight().fillMaxWidth()){
+                            Row(modifier = Modifier.align(Alignment.CenterStart)) {
+                                Icon(
+                                    painter = painterResource(id = it.navOption.icon),
+                                    contentDescription = "Google",
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(start = 4.dp),
+                                    tint = Color.Unspecified
+                                )
+                                Spacer(modifier = Modifier.width(15.dp))
+                                Text(text = it.navOption.title, style = MaterialTheme.typography.body1)
+                            }
+                            Text(
+                                text = it.dynamicField.toString(),
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier.align(Alignment.CenterEnd)
                             )
-                            Spacer(modifier = Modifier.width(15.dp))
-                            Text(text = it.navOption.title, style = MaterialTheme.typography.body1)
                         }
-                        Text(
-                            text = it.dynamicField.toString(),
-                            style = MaterialTheme.typography.body1,
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        )
+
                     }
                 }
             }
             Spacer(modifier = Modifier.height(35.dp))
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+            ) {
                 Row(
                     modifier = Modifier.align(Alignment.CenterStart),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "Проекты", fontSize = 21.sp, fontWeight = FontWeight.SemiBold,)
+                    Text(text = "Проекты", style = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.SemiBold),)
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "Использовано 1/5",
                         fontSize = 14.sp,
-                        fontWeight = FontWeight.Light,
+                        style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.Light),
                         modifier = Modifier.background(color = Color.LightGray)
                     )
                 }
@@ -193,22 +208,26 @@ fun MainBottomSheetLayout() {
                                     indication = rememberRipple()
                                 ) {
                                 }) {
-                                Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                                    Canvas(modifier = Modifier.size(20.dp)) {
-                                        drawCircle(
-                                            color = Color.Gray,
-                                            center = Offset(size.width / 2, size.height / 2),
-                                            radius = size.width / 2
-                                        )
+                                Box(modifier = Modifier.padding(horizontal = 24.dp).fillMaxHeight().fillMaxWidth()){
+                                    Row(modifier = Modifier.align(Alignment.CenterStart)) {
+                                        Canvas(modifier = Modifier.size(20.dp)) {
+                                            drawCircle(
+                                                color = Color.Gray,
+                                                center = Offset(size.width / 2, size.height / 2),
+                                                radius = size.width / 2
+                                            )
+                                        }
+                                        Spacer(modifier = Modifier.width(15.dp))
+                                        Text(text = "Работа", style = MaterialTheme.typography.body1)
                                     }
-                                    Spacer(modifier = Modifier.width(15.dp))
-                                    Text(text = "Работа", style = MaterialTheme.typography.body1)
                                 }
                             }
 
                             Box(modifier = Modifier
                                 .fillMaxWidth()
-                                .height(60.dp)
+                                .height(50.dp)
+                                .padding(horizontal = 20.dp)
+
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = rememberRipple()

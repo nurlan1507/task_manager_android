@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Project
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_users.data.UserDao
 import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 
@@ -21,7 +23,7 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 //}
 
 @Database(
-    entities = [User::class],
+    entities = [User::class, Project::class, Task::class],
     version = 1  ,
     exportSchema = false
 )
