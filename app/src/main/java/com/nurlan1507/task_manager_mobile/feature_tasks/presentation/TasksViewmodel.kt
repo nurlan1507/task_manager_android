@@ -21,7 +21,18 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             is TasksEvent.ChangeCategory ->{
                 _tasksState.value = _tasksState.value.copy(currentCategory = event.category)
             }
-
+            is TasksEvent.EnteredTitle ->{
+                _fieldState.value = _fieldState.value.copy(title = event.value)
+            }
+            is TasksEvent.EnteredDescription->{
+                _fieldState.value = _fieldState.value.copy(description = event.value)
+            }
+            is TasksEvent.EnteredFinishDate->{
+                _fieldState.value = _fieldState.value.copy(finishDate = event.value)
+            }
+            is TasksEvent.EnteredProjectId->{
+                _fieldState.value = _fieldState.value.copy(projectId = event.value)
+            }
         }
     }
 }

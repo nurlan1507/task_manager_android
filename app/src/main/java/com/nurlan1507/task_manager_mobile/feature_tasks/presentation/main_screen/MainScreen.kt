@@ -3,6 +3,7 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_scree
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
@@ -24,6 +25,7 @@ import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.BottomSheetLayoutState
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
@@ -71,6 +73,12 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             bottomSheetState = bottomSheetState.copy(layout =  { MainBottomSheetLayout(tasksViewModel, sheetState) })
             scope.launch {
                 sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(1000))
+            }
+        }
+        BottomSheetLayoutType.ADD_TASK -> {
+            bottomSheetState = bottomSheetState.copy(layout = { TaskCreationBottomSheetLayout(tasksViewModel = tasksViewModel, sheetState = sheetState) })
+            scope.launch {
+                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
             }
         }
         else -> bottomSheetState = bottomSheetState.copy(layout =  { MainBottomSheetLayout(tasksViewModel, sheetState) })

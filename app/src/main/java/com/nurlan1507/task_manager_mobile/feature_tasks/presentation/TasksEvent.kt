@@ -7,7 +7,7 @@ sealed class TasksEvent {
 
     data class EnteredTitle(val value:String):TasksEvent()
     data class EnteredDescription(val value:String):TasksEvent()
-    data class EnteredFinishDate(val value:String):TasksEvent()
+    data class EnteredFinishDate(val value:Long?):TasksEvent()
 
     data class EnteredProjectId(val value:String):TasksEvent()
 }
