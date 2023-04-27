@@ -1,5 +1,6 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
 
+import android.util.Log
 import android.widget.Space
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,12 +24,15 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
@@ -36,9 +40,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -46,6 +55,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -58,24 +68,31 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.ProjectSelectionButton
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.TaskCreationButton
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState){
-    val fieldState = tasksViewModel.fieldState
+fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState, onClose:(ModalBottomSheetState)->Unit){
+    val scope = rememberCoroutineScope()
+//    val fieldState = tasksViewModel.fieldState
+    val softwareKeyboardController = LocalSoftwareKeyboardController.current
+
     val tasksState = tasksViewModel.tasksState
-    val focusRequester = remember { FocusRequester() }
-    val focusManager  = LocalFocusManager.current
-    
-    val showKeyboard = remember { mutableStateOf(true) }
     val keyboard = LocalSoftwareKeyboardController.current
-    LaunchedEffect(focusRequester){
-        if (showKeyboard.equals(true)) {
-            focusRequester.requestFocus()
+
+    LaunchedEffect(sheetState){
+        keyboard?.hide()
+        scope.launch {
             delay(100) // Make sure you have delay here
-            keyboard?.show()
         }
     }
+    DisposableEffect(Unit){
+        onDispose {
+            Log.d("laynchEffect", "taskCreateLauncheffect")
+            onClose(sheetState)
+        }
+    }
+
     Box(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
@@ -85,8 +102,12 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                value =fieldState.value.title,
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            softwareKeyboardController?.hide()
+                        }
+                    },
+                value =tasksViewModel.fieldState.value.title,
                 onValueChange = {tasksViewModel.onEvent(TasksEvent.EnteredTitle(it))},
                 placeholder = { Text("It is a long established fact that a reader will b", style = MaterialTheme.typography.h6 , fontWeight = FontWeight.Light) },
                 textStyle = MaterialTheme.typography.h5.copy(fontWeight = FontWeight.SemiBold),
@@ -100,7 +121,17 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 ),
             )
             TextField(
-                value = fieldState.value.description,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        if (!focusState.isFocused) {
+                            softwareKeyboardController?.hide()
+                        }
+                    },
+                keyboardActions = KeyboardActions(onDone = {
+                    softwareKeyboardController?.hide()
+                }),
+                value = tasksViewModel.fieldState.value.description,
                 onValueChange = {
                     tasksViewModel.onEvent(TasksEvent.EnteredDescription(it))
                 },
@@ -111,9 +142,6 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 ),
                 placeholder = { Text("Описание", style = MaterialTheme.typography.body1 , fontWeight = FontWeight.Light) },
                 textStyle = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold),
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Next,
-                ),
             )
             Row(modifier = Modifier
                 .wrapContentHeight()
@@ -126,8 +154,10 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 TaskCreationButton(icon =Icons.Default.DateRange , text = "чето еще")
             }
             Spacer(modifier = Modifier.height(12.dp))
-            Row(modifier = Modifier.fillMaxWidth().height(40.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                ProjectSelectionButton(projectId = fieldState.value.projectId, projectList = tasksState.value.projects )
+            Row(modifier = Modifier
+                .fillMaxWidth()
+                .height(40.dp), horizontalArrangement = Arrangement.SpaceBetween){
+                ProjectSelectionButton(projectId = tasksViewModel.fieldState.value.projectId, projectList = tasksState.value.projects )
                 Box(modifier = Modifier
                     .background(Color(0xFF5E97FF))
                     .size(40.dp)
@@ -141,6 +171,8 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 }
             }
         }
+
+
 
 
     }

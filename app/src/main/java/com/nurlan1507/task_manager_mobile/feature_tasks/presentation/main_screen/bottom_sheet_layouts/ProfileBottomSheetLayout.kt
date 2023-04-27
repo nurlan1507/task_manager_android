@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -130,7 +131,7 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(if(it.navOption==state.value.currentCategory)Color.LightGray else Color.Transparent)
+                        .background(if (it.navOption == state.value.currentCategory) Color.LightGray else Color.Transparent)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple()
@@ -138,7 +139,10 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                             tasksViewModel.onEvent(TasksEvent.ChangeCategory(it.navOption))
 
                         }) {
-                        Box(modifier = Modifier.padding(horizontal = 20.dp).fillMaxHeight().fillMaxWidth()){
+                        Box(modifier = Modifier
+                            .padding(horizontal = 20.dp)
+                            .fillMaxHeight()
+                            .fillMaxWidth()){
                             Row(modifier = Modifier.align(Alignment.CenterStart)) {
                                 Icon(
                                     painter = painterResource(id = it.navOption.icon),
@@ -162,7 +166,9 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                 }
             }
             Spacer(modifier = Modifier.height(35.dp))
-            Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
             ) {
                 Row(
                     modifier = Modifier.align(Alignment.CenterStart),
@@ -208,7 +214,10 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                                     indication = rememberRipple()
                                 ) {
                                 }) {
-                                Box(modifier = Modifier.padding(horizontal = 24.dp).fillMaxHeight().fillMaxWidth()){
+                                Box(modifier = Modifier
+                                    .padding(horizontal = 24.dp)
+                                    .fillMaxHeight()
+                                    .fillMaxWidth()){
                                     Row(modifier = Modifier.align(Alignment.CenterStart)) {
                                         Canvas(modifier = Modifier.size(20.dp)) {
                                             drawCircle(

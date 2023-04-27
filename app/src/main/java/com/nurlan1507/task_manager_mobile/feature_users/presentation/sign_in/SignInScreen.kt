@@ -78,7 +78,9 @@ fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController
                 if(result.data!=null){
                     val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
                     if(task.isSuccessful){
-                        userViewModel.onEvent(event = UserEvent.GoogleSignInEvent(task.result.id.toString(), task.result.displayName.toString(), task.result.email.toString()))}else{
+                        userViewModel.onEvent(event = UserEvent.GoogleSignInEvent(task.result.id.toString(), task.result.displayName.toString(), task.result.email.toString()))
+                        navController.navigate(Screen.MainScreen.route)
+                    }else{
                     }
                 }
         }
