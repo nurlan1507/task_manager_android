@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TaskCreationButton(icon:ImageVector, text:String ){
+fun TaskCreationButton(icon:ImageVector, text:String, onClick:()->Unit = {} ){
     Box(modifier = Modifier
         .wrapContentWidth()
         .wrapContentHeight()
@@ -32,7 +32,9 @@ fun TaskCreationButton(icon:ImageVector, text:String ){
         .clickable {
         }
     ){
-        Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)){
+        Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp).clickable {
+            onClick()
+        }){
             Icon(icon, tint = Color.Gray, contentDescription = "Срок выполнения")
             Spacer(modifier = Modifier.width(3.dp))
             Text(text = text, style = MaterialTheme.typography.body2, color = Color.Gray)

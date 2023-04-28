@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_scree
 
 import android.util.Log
 import android.widget.Space
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -62,24 +63,23 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.BottomSheetLayoutState
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.MyExpandableTextField
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.ProjectSelectionButton
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.TaskCreationButton
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState, onClose:(ModalBottomSheetState)->Unit){
-    val scope = rememberCoroutineScope()
-//    val fieldState = tasksViewModel.fieldState
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
-
     val tasksState = tasksViewModel.tasksState
     val keyboard = LocalSoftwareKeyboardController.current
-
+    val scope = rememberCoroutineScope()
     LaunchedEffect(sheetState){
         keyboard?.hide()
         scope.launch {
@@ -148,7 +148,12 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 .horizontalScroll(rememberScrollState()),
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ){
-                TaskCreationButton(icon = Icons.Default.DateRange, text = "Срок выполнения")
+                TaskCreationButton(icon = Icons.Default.DateRange, text = "Срок выполнения", onClick ={
+                    tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.DateSelection))
+                    scope.launch {
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded, tween(500))
+                    }
+                })
                 TaskCreationButton(icon =Icons.Default.DateRange , text = "Приоритет")
                 TaskCreationButton(icon =Icons.Default.DateRange , text = "Напоминание")
                 TaskCreationButton(icon =Icons.Default.DateRange , text = "чето еще")

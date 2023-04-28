@@ -9,6 +9,6 @@ data class TasksState (
     val currentProject:ProjectWithTasks? = null,
     val projects:List<ProjectWithTasks> = listOf(),
 
-    val task: Task = Task()
+    val task: Task = Task(0)
 
         )

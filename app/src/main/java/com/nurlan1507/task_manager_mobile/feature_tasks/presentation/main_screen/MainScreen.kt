@@ -1,7 +1,12 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.util.Log
+import android.view.KeyEvent
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,13 +34,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.BottomSheetLayoutState
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.DateSelectionBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
@@ -53,9 +62,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel){
+    val ctx = LocalContext.current as Activity
     val state = tasksViewModel.tasksState
     var showDialog by remember{ mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(
+
+
+    var sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = {
             if(it == ModalBottomSheetValue.Hidden){
@@ -66,8 +78,15 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
         skipHalfExpanded = true
     )
     val scope = rememberCoroutineScope()
-    val keyboard = LocalSoftwareKeyboardController.current
-
+    BackHandler {
+        if(sheetState.isVisible) {
+            scope.launch {
+                sheetState.hide()
+            }
+        }else{
+            ctx.finish()
+        }
+    }
     ModalBottomSheetLayout(
         content = {
             Scaffold(
@@ -163,6 +182,9 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
 
                             }
                         }
+                    }
+                    is BottomSheetLayoutType.DateSelection ->{
+                        DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel)
                     }
                     else -> {Box{}}
                 }

@@ -10,6 +10,8 @@ sealed class BottomSheetLayoutType{
     object Profile:BottomSheetLayoutType()
     object AddTask:BottomSheetLayoutType()
 
+    object DateSelection:BottomSheetLayoutType()
+
 }
 data class CurrentBottomSheetLayout(
     var type:BottomSheetLayoutType?,

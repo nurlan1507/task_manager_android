@@ -11,11 +11,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.CurrentBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.feature_users.api.AuthRemoteDataSource
+import com.nurlan1507.task_manager_mobile.feature_users.data.repository.UserRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
+import com.nurlan1507.task_manager_mobile.feature_users.domain.repository.UserRepository
+import com.nurlan1507.task_manager_mobile.feature_users.domain.use_cases.AddUserToLocalDb
+import com.nurlan1507.task_manager_mobile.feature_users.domain.use_cases.GetUserUseCase
+import com.nurlan1507.task_manager_mobile.feature_users.domain.use_cases.GoogleSignInUseCase
+import com.nurlan1507.task_manager_mobile.feature_users.domain.use_cases.UserUseCases
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserEvent
+import com.nurlan1507.task_manager_mobile.restService.RestService
+import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import kotlinx.coroutines.launch
 
 class TasksViewModel(application: Application):AndroidViewModel(application) {
+    private val repository: UserRepository
+
     private val _tasksState = mutableStateOf(TasksState())
     val tasksState: State<TasksState> = _tasksState
 
@@ -24,6 +35,11 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
 
     private var _currentBottomSheetLayout = mutableStateOf<BottomSheetLayoutType?>(null)
     val currentBottomSheetLayout:State<BottomSheetLayoutType?> = _currentBottomSheetLayout
+    init{
+        val userDao = TaskManagerDatabase.getDatabase(application).userDao()
+        repository = UserRepositoryImpl(userDao, AuthRemoteDataSource(RestService.authService))
+    }
+
     fun onEvent(event: TasksEvent){
         when(event){
             is TasksEvent.ChangeCategory ->{

@@ -8,9 +8,9 @@ import androidx.room.util.TableInfo
 
 @Entity(tableName = "task", foreignKeys = [])
 data class Task(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id")
-    val taskId:String="",
+    val taskId:Long,
     val title:String?=null,
     val description:String?=null,
     @ColumnInfo(name = "finish_date")
