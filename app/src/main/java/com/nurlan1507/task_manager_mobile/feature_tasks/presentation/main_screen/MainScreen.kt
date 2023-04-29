@@ -2,11 +2,13 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_scree
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +55,7 @@ import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
     ExperimentalComposeUiApi::class
 )
@@ -67,7 +70,17 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
     var showDialog by remember{ mutableStateOf(false) }
 
 
-    var sheetState = rememberModalBottomSheetState(
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmStateChange = {
+            if(it == ModalBottomSheetValue.Hidden){
+                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(null ))
+            }
+            true
+        },
+        skipHalfExpanded = true
+    )
+    val sheetState2 = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = {
             if(it == ModalBottomSheetValue.Hidden){
@@ -79,7 +92,12 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
     )
     val scope = rememberCoroutineScope()
     BackHandler {
-        if(sheetState.isVisible) {
+        if(sheetState2.isVisible){
+            scope.launch {
+                sheetState2.hide()
+            }
+        }
+        else if(sheetState.isVisible) {
             scope.launch {
                 sheetState.hide()
             }
@@ -87,65 +105,68 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             ctx.finish()
         }
     }
-    ModalBottomSheetLayout(
-        content = {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopBar<String>(title = state.value.currentCategory.title){
 
-                    }
-                },
-                content = {
-                    Column() {
-                        if(showDialog){
-                            AlertDialog(
-                                onDismissRequest = { },
-                                title = { Text(text = "Вы уверены, что хотите закрыть?", style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)) },
-                                text = { Text(text = "Несохраненные данные удалятся", style = MaterialTheme.typography.body1)},
-                                confirmButton = {
-                                    TextButton(onClick = { showDialog = false ; tasksViewModel.onEvent(TasksEvent.ClearTextFieldState()); scope.launch {sheetState.hide()};}) {
-                                        Text(text = "Да", color = Color(0xFF5E97FF))
-                                    }
-                                },
-                                dismissButton = {
-                                    TextButton(onClick = {showDialog = false; scope.launch {
-                                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.AddTask ))
-                                        sheetState.show()
-                                    } }) {
-                                        Text(text = "Нет", color = Color(0xFF5E97FF))
-                                    }
-                                }
-                            )
+
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopBar<String>(title = state.value.currentCategory.title){
+
+            }
+        },
+        content = {
+            Column() {
+                if(showDialog){
+                    AlertDialog(
+                        onDismissRequest = { },
+                        title = { Text(text = "Вы уверены, что хотите закрыть?", style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)) },
+                        text = { Text(text = "Несохраненные данные удалятся", style = MaterialTheme.typography.body1)},
+                        confirmButton = {
+                            TextButton(onClick = { showDialog = false ; tasksViewModel.onEvent(TasksEvent.ClearTextFieldState()); scope.launch {sheetState.hide()};}) {
+                                Text(text = "Да", color = Color(0xFF5E97FF))
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = {showDialog = false; scope.launch {
+                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.AddTask ))
+                                sheetState.show()
+                            } }) {
+                                Text(text = "Нет", color = Color(0xFF5E97FF))
+                            }
                         }
-                    }
-                },
-                bottomBar = {
-                    BottomNavigationBar(
-                        showAddTask ={
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.AddTask))
-                                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
-                            } } ,
-                        showSearch = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Search))
-                                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
-                            }},
-                        showProfile = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Profile))
-                                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
-                            }},
-                        showNotification = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Nofifications))
-                                sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
-                            }}
                     )
                 }
-            )
+            }
         },
+        bottomBar = {
+            BottomNavigationBar(
+                showAddTask ={
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.AddTask))
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
+                    } } ,
+                showSearch = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Search))
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
+                    }},
+                showProfile = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Profile))
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
+                    }},
+                showNotification = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Nofifications))
+                        sheetState.animateTo(ModalBottomSheetValue.Expanded, anim = tween(500))
+                    }}
+            )
+        }
+    )
+
+
+    ModalBottomSheetLayout(
         sheetContent ={
             Column(modifier =
             Modifier.heightIn(min = 1.dp)) {
@@ -173,7 +194,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                     }
                     is BottomSheetLayoutType.AddTask ->{
                         Log.d("currentDestination", "add_task")
-                        TaskCreationBottomSheetLayout(tasksViewModel = tasksViewModel, sheetState = sheetState) {
+                        TaskCreationBottomSheetLayout(tasksViewModel = tasksViewModel, sheetState = sheetState2) {
                             if (it.currentValue != ModalBottomSheetValue.Hidden) {
                                 if (tasksViewModel.fieldState.value.title.isNotEmpty() || tasksViewModel.fieldState.value.description.isNotEmpty()) {
                                     Log.d("ModalBottomShit", "sdsd")
@@ -183,13 +204,21 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                             }
                         }
                     }
-                    is BottomSheetLayoutType.DateSelection ->{
-                        DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel)
-                    }
                     else -> {Box{}}
                 }
             }
         } ,
         sheetState = sheetState
-        )
+        ){}
+
+
+    ModalBottomSheetLayout(
+        sheetContent ={
+            Column(modifier =
+            Modifier.heightIn(min = 1.dp)) {
+                DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel)
+            }
+        } ,
+        sheetState = sheetState2
+    ){}
 }

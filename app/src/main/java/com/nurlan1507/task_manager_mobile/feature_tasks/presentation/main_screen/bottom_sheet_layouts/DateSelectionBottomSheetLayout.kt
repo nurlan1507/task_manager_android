@@ -1,5 +1,8 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
 
+import android.os.Build
+import android.widget.CalendarView
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -32,7 +35,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.DateSelectionView
+import java.util.Calendar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel){
     Box(
@@ -153,6 +159,9 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel){
                     Spacer(modifier = Modifier.width(15.dp))
                     Text(text = "6 мая", style = MaterialTheme.typography.body1)
                 }
+            }
+            Box(){
+                DateSelectionView(onDateSelected = {})
             }
         }
     }

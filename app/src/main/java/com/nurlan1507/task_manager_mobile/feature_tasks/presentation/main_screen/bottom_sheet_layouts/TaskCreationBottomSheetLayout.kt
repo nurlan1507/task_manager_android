@@ -149,7 +149,10 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 TaskCreationButton(icon = Icons.Default.DateRange, text = "Срок выполнения", onClick ={
-                    tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.DateSelection))
+//                    tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.DateSelection))
+//                    scope.launch {
+//                        sheetState.animateTo(ModalBottomSheetValue.Expanded, tween(500))
+//                    }
                     scope.launch {
                         sheetState.animateTo(ModalBottomSheetValue.Expanded, tween(500))
                     }
