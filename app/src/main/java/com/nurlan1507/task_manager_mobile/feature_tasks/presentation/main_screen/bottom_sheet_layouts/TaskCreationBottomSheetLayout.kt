@@ -1,12 +1,17 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
+import android.view.KeyEvent
 import android.widget.Space
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,11 +63,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.BottomSheetLayoutState
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
@@ -70,29 +77,18 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.ProjectSelectionButton
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.TaskCreationButton
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
+import com.nurlan1507.task_manager_mobile.utils.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState, onClose:(ModalBottomSheetState)->Unit){
+fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState, navController:NavController){
     val softwareKeyboardController = LocalSoftwareKeyboardController.current
     val tasksState = tasksViewModel.tasksState
-    val keyboard = LocalSoftwareKeyboardController.current
-    val scope = rememberCoroutineScope()
-    LaunchedEffect(sheetState){
-        keyboard?.hide()
-        scope.launch {
-            delay(100) // Make sure you have delay here
-        }
-    }
-    DisposableEffect(Unit){
-        onDispose {
-            Log.d("laynchEffect", "taskCreateLauncheffect")
-            onClose(sheetState)
-        }
-    }
 
+    val scope = rememberCoroutineScope()
     Box(modifier = Modifier
         .fillMaxWidth()
         .wrapContentHeight()
@@ -149,12 +145,8 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                 horizontalArrangement = Arrangement.spacedBy(10.dp)
             ){
                 TaskCreationButton(icon = Icons.Default.DateRange, text = "Срок выполнения", onClick ={
-//                    tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.DateSelection))
-//                    scope.launch {
-//                        sheetState.animateTo(ModalBottomSheetValue.Expanded, tween(500))
-//                    }
                     scope.launch {
-                        sheetState.animateTo(ModalBottomSheetValue.Expanded, tween(500))
+                        sheetState.show()
                     }
                 })
                 TaskCreationButton(icon =Icons.Default.DateRange , text = "Приоритет")
@@ -171,7 +163,6 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                     .size(40.dp)
                     .clip(RoundedCornerShape(50))
                     .clickable {
-
                     },
 
                 ) {

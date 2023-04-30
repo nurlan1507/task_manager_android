@@ -13,4 +13,8 @@ sealed class TasksEvent {
     data class EnteredProjectId(val value:String):TasksEvent()
     class ClearTextFieldState():TasksEvent()
     data class ChangeBottomSheetDestination(val type: BottomSheetLayoutType?):TasksEvent()
+
+    object ValidateTextFields : TasksEvent()
+
+
 }
