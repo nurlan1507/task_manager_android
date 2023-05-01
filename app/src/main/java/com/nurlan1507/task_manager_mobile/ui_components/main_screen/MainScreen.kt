@@ -39,6 +39,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
@@ -59,7 +62,7 @@ import kotlinx.coroutines.launch
 )
 
 @Composable
-fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel){
+fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel){
     val ctx = LocalContext.current as Activity
     val state = tasksViewModel.tasksState
     var showDialog by remember{ mutableStateOf(false) }
@@ -178,7 +181,6 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                             )
                             showBottomSheet()
                             tasksViewModel.error.value = false
-
                         }
                         }) {
                             Text(text = "Нет", color = Color(0xFF5E97FF))
@@ -187,7 +189,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                     properties = DialogProperties(decorFitsSystemWindows = true)
                 )
             }
-            Button(onClick = { tasksViewModel.onEvent(TasksEvent.GetProjectById("11")) }) {
+            Button(onClick = { projectViewmodel.onEvent(ProjectEvent.getProject(projectId = "11")) }) {
                 Text(text = "getTasks")
             }
         }
