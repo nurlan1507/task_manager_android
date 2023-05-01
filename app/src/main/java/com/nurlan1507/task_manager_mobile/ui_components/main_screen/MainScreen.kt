@@ -9,6 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.EaseInBounce
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.components.TaskView
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import kotlinx.coroutines.launch
 
@@ -155,7 +157,6 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             )
         }
     ){
-        Column(modifier = Modifier.padding(it)) {
             if(showDialog){
                 AlertDialog(
                     onDismissRequest = { },
@@ -189,11 +190,25 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                     properties = DialogProperties(decorFitsSystemWindows = true)
                 )
             }
-            Button(onClick = { projectViewmodel.onEvent(ProjectEvent.getProject(projectId = "11")) }) {
-                Text(text = "getTasks")
-            }
+
+
+        Column(modifier = Modifier.padding(it)) {
+
+//            Button(onClick = { /*TODO*/ }, modifier = Modifier.background(Color.Yellow)) {
+//                Text(text = "ASDAS")
+//            }
+//            Button(onClick = { /*TODO*/ }, modifier = Modifier.background(Color.Yellow)) {
+//                Text(text = "ASDAS")
+//            }
+
+            TaskView(Modifier)
+            TaskView(Modifier)
+            TaskView(Modifier)
+
         }
+
     }
+
     ModalBottomSheetLayout(
         sheetContent ={
             Column(modifier = Modifier.heightIn(min = 1.dp)) {

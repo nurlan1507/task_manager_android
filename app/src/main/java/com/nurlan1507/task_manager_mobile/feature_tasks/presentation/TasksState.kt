@@ -11,6 +11,7 @@ data class TasksState (
     val dateSelectionOption: DateSelectionMenu? = null,
     val currentProject: ProjectWithTasks? = null,
     val projects:List<Project> = listOf(Project(projectId = "11", title = "Входящие"), Project(projectId = "22", title = "Работа")),
+    val tasks:List<Task> = listOf<Task>(),
     val task: Task = Task(0)
 
 )

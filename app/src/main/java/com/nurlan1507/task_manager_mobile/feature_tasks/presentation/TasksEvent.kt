@@ -22,6 +22,5 @@ sealed class TasksEvent {
     data class ChangeDateSelectionOption(val type: DateSelectionMenu):TasksEvent()
     object ValidateTextFields : TasksEvent()
 
-    data class GetProjectById(val id:String):TasksEvent()
 
 }

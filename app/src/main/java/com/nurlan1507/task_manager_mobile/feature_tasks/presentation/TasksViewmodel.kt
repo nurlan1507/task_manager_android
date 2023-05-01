@@ -22,6 +22,8 @@ import com.nurlan1507.task_manager_mobile.feature_users.data.repository.UserRepo
 import com.nurlan1507.task_manager_mobile.feature_users.domain.repository.UserRepository
 import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,6 +78,16 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
         when(event){
             is TasksEvent.ChangeCategory ->{
                 _tasksState.value = _tasksState.value.copy(currentCategory = event.category)
+                when(event.category){
+                    is MainScreenNavigationOption.TodayTasks ->{
+                        viewModelScope.launch {
+                            val tasks = useCases.getTasksUseCase("11")
+                            _tasksState.value =_tasksState.value.copy(tasks = tasks)
+                        }
+                    }
+                    else ->{}
+                }
+
             }
             is TasksEvent.EnteredTitle ->{
                 _fieldState.value = _fieldState.value.copy(title = event.value)
@@ -107,11 +119,6 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                 viewModelScope.launch {
                     val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
                     useCases.createTaskUseCase(task)
-                }
-            }
-            is TasksEvent.GetProjectById -> {
-                viewModelScope.launch {
-                    val tasks = useCases.getProjectUseCase(event.id)
                 }
             }
             is TasksEvent.CreateProject -> {
