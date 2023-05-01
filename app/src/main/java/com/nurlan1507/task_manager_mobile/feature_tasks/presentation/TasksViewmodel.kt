@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.MutableState
@@ -13,8 +14,9 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksRemoteDataSourc
 import com.nurlan1507.task_manager_mobile.feature_tasks.data.repository.TasksRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskUseCase
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.TasksUseCases
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_users.data.repository.UserRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_users.domain.repository.UserRepository
@@ -53,7 +55,7 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
     init{
         val taskDao = TaskManagerDatabase.getDatabase(application).taskDao()
         repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource())
-        useCases = TasksUseCases(CreateTaskUseCase(repository = repository))
+        useCases = TasksUseCases(CreateTaskUseCase(repository) , GetTasksUseCase(repository))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -106,6 +108,16 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                     val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
                     useCases.createTaskUseCase(task)
                 }
+            }
+            is TasksEvent.GetProjectById -> {
+                viewModelScope.launch {
+                    val tasks = useCases.getProjectUseCase(event.id)
+                }
+            }
+            is TasksEvent.CreateProject -> {
+//                viewModelScope.launch{
+//                    repository.
+//                }
             }
         }
     }

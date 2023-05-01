@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
+package com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts
 
 import android.os.Build
 import android.util.Log
@@ -48,8 +48,8 @@ import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.DateSelectionView
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.DateSelectionMenu
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.daysOfTheWeek
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.DateSelectionMenu
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.daysOfTheWeek
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -124,7 +124,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.Tomorrow)Color.LightGray else Color.Transparent)
+                .background(if(tasksState.dateSelectionOption== DateSelectionMenu.Tomorrow)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
@@ -157,7 +157,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.Weekend)Color.LightGray else Color.Transparent)
+                .background(if(tasksState.dateSelectionOption== DateSelectionMenu.Weekend)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
@@ -193,7 +193,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.NoDate)Color.LightGray else Color.Transparent)
+                .background(if(tasksState.dateSelectionOption== DateSelectionMenu.NoDate)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()

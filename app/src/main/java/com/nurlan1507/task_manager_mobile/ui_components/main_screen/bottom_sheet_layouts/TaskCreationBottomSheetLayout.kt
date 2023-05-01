@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
+package com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -76,7 +76,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewMo
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.MyExpandableTextField
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.ProjectSelectionButton
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.TaskCreationButton
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

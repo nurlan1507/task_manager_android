@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts
+package com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts
 
 import android.widget.Space
 import androidx.compose.animation.AnimatedVisibility
@@ -58,8 +58,8 @@ import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.MainScreenDynamicNavigationOption
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.MainScreenNavigationOption
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenDynamicNavigationOption
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

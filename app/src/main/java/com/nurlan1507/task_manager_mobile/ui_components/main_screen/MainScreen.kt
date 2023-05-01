@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen
+package com.nurlan1507.task_manager_mobile.ui_components.main_screen
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ModalBottomSheetLayout
@@ -37,11 +39,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.DateSelectionBottomSheetLayout
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.DateSelectionBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
@@ -108,7 +111,87 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             ctx.finish()
         }
     }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopBar<String>(title = state.value.currentCategory.title){
 
+            }
+        },
+        bottomBar = {
+            BottomNavigationBar(
+                showAddTask ={
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(
+                            BottomSheetLayoutType.AddTask
+                        ))
+                        showBottomSheet()
+                    } } ,
+                showSearch = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(
+                            BottomSheetLayoutType.Search
+                        ))
+                        showBottomSheet()
+                    }},
+                showProfile = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(
+                            BottomSheetLayoutType.Profile
+                        ))
+                        showBottomSheet()
+
+                    }},
+                showNotification = {
+                    scope.launch {
+                        tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(
+                            BottomSheetLayoutType.Nofifications
+                        ))
+                        showBottomSheet()
+                    }}
+            )
+        }
+    ){
+        Column(modifier = Modifier.padding(it)) {
+            if(showDialog){
+                AlertDialog(
+                    onDismissRequest = { },
+                    title = { Text(text = "Вы уверены, что хотите закрыть?", style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)) },
+                    text = { Text(text = "Несохраненные данные удалятся", style = MaterialTheme.typography.body1)},
+                    confirmButton = {
+                        TextButton(onClick = {
+                            showDialog = false ;
+                            tasksViewModel.onEvent(TasksEvent.ClearTextFieldState);
+                            hideBottomSheet()
+                            tasksViewModel.error.value = false
+                            ;}) {
+                            Text(text = "Да", color = Color(0xFF5E97FF))
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showDialog = false; scope.launch {
+                            tasksViewModel.onEvent(
+                                TasksEvent.ChangeBottomSheetDestination(
+                                    BottomSheetLayoutType.AddTask
+                                )
+                            )
+                            showBottomSheet()
+                            tasksViewModel.error.value = false
+
+                        }
+                        }) {
+                            Text(text = "Нет", color = Color(0xFF5E97FF))
+                        }
+                    },
+                    properties = DialogProperties(decorFitsSystemWindows = true)
+                )
+            }
+            Button(onClick = { tasksViewModel.onEvent(TasksEvent.GetProjectById("11")) }) {
+                Text(text = "getTasks")
+            }
+        }
+    }
     ModalBottomSheetLayout(
         sheetContent ={
             Column(modifier = Modifier.heightIn(min = 1.dp)) {
@@ -127,7 +210,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                             sheetState = modalSheetState
                         )
                     }
-                    is BottomSheetLayoutType.Search-> {
+                    is BottomSheetLayoutType.Search -> {
                         Log.d("currentDestination", "search")
                         MainBottomSheetLayout(
                             tasksViewModel = tasksViewModel,
@@ -143,81 +226,8 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             }
         },
         sheetState = modalSheetState,
-        content = {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    TopBar<String>(title = state.value.currentCategory.title){
-
-                    }
-                },
-                content = {
-                    Column() {
-                        if(showDialog){
-                            AlertDialog(
-                                onDismissRequest = { },
-                                title = { Text(text = "Вы уверены, что хотите закрыть?", style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)) },
-                                text = { Text(text = "Несохраненные данные удалятся", style = MaterialTheme.typography.body1)},
-                                confirmButton = {
-                                    TextButton(onClick = {
-                                        showDialog = false ;
-                                        tasksViewModel.onEvent(TasksEvent.ClearTextFieldState);
-                                        hideBottomSheet()
-                                        tasksViewModel.error.value = false
-                                        ;}) {
-                                        Text(text = "Да", color = Color(0xFF5E97FF))
-                                    }
-                                },
-                                dismissButton = {
-                                    TextButton(onClick = {
-                                        showDialog = false; scope.launch {
-                                        tasksViewModel.onEvent(
-                                            TasksEvent.ChangeBottomSheetDestination(
-                                                BottomSheetLayoutType.AddTask
-                                            )
-                                        )
-                                        showBottomSheet()
-                                        tasksViewModel.error.value = false
-
-                                    }
-                                    }) {
-                                        Text(text = "Нет", color = Color(0xFF5E97FF))
-                                    }
-                                },
-                                properties = DialogProperties(decorFitsSystemWindows = true)
-                            )
-                        }
-                    }
-                },
-                bottomBar = {
-                    BottomNavigationBar(
-                        showAddTask ={
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.AddTask))
-                                showBottomSheet()
-                            } } ,
-                        showSearch = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Search))
-                                showBottomSheet()
-                            }},
-                        showProfile = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Profile))
-                                showBottomSheet()
-
-                            }},
-                        showNotification = {
-                            scope.launch {
-                                tasksViewModel.onEvent(TasksEvent.ChangeBottomSheetDestination(BottomSheetLayoutType.Nofifications))
-                                showBottomSheet()
-                            }}
-                    )
-                }
-            )
-        }
-        )
-    ModalBottomSheetLayout(sheetContent ={ DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel)}, sheetState = modalSheetState2 ) {
+        ){}
+    ModalBottomSheetLayout(sheetContent ={ DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel) }, sheetState = modalSheetState2 ) {
 
     }
 }

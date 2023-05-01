@@ -40,8 +40,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
-import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.CurrentBottomSheetLayout
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.CurrentBottomSheetLayout
 import kotlinx.coroutines.launch
 
 @Composable

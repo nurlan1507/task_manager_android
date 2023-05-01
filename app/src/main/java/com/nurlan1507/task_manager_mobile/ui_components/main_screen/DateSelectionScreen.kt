@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen
+package com.nurlan1507.task_manager_mobile.ui_components.main_screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
