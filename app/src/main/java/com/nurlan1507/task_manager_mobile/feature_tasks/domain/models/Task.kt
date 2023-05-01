@@ -10,7 +10,7 @@ import androidx.room.util.TableInfo
 data class Task(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "task_id")
-    val taskId:Long,
+    val taskId:Long?=null,
     val title:String?=null,
     val description:String?=null,
     @ColumnInfo(name = "finish_date")

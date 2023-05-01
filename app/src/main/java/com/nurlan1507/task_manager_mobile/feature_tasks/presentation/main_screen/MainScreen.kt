@@ -93,8 +93,16 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
         }
     }
 
+    val hideSecondBottomSheet:() -> Unit={
+        scope.launch {
+            modalSheetState2.hide()
+        }
+    }
     BackHandler {
-        if(modalSheetState.isVisible) {
+        if(modalSheetState2.isVisible){
+            hideSecondBottomSheet()
+        }
+        else if(modalSheetState.isVisible) {
             hideBottomSheet()
         }else{
             ctx.finish()
@@ -153,7 +161,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                                 confirmButton = {
                                     TextButton(onClick = {
                                         showDialog = false ;
-                                        tasksViewModel.onEvent(TasksEvent.ClearTextFieldState());
+                                        tasksViewModel.onEvent(TasksEvent.ClearTextFieldState);
                                         hideBottomSheet()
                                         tasksViewModel.error.value = false
                                         ;}) {

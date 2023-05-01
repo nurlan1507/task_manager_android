@@ -6,5 +6,5 @@ data class TasksTextFieldState(
     val title: String = "",
     val description:String = "",
     val finishDate:Long? = System.currentTimeMillis(),
-    val projectId:String=""
+    val projectId:String="11"
 )

@@ -44,9 +44,9 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.ProjectWit
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 
 @Composable
-fun ProjectSelectionButton(projectId:String, projectList:List<ProjectWithTasks>){
-    val currentProject = projectList.find { it.project.projectId == projectId }
-    var showDropdownMenu by remember{
+fun ProjectSelectionButton(projectId:String, projectList:List<Project>, onProjectSelected:(String)->Unit) {
+    val currentProject = projectList.find { it.projectId == projectId }
+    var showDropdownMenu by remember {
         mutableStateOf(false)
     }
     Box(modifier = Modifier
@@ -58,8 +58,8 @@ fun ProjectSelectionButton(projectId:String, projectList:List<ProjectWithTasks>)
         }
     ){
         Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)){
-            if(projectId == "1"){
-                Icon(painter = painterResource(id = R.drawable.incoming_icon), contentDescription = "Срок выполнения")
+            if(projectId == "11"){
+                Icon(painter = painterResource(id = R.drawable.incoming_icon), contentDescription = "Срок выполнения", tint = Color.Unspecified)
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(text = "Входящие" , style = MaterialTheme.typography.body2, color = Color.Gray)
             }else{
@@ -71,7 +71,7 @@ fun ProjectSelectionButton(projectId:String, projectList:List<ProjectWithTasks>)
                     )
                 }
                 Spacer(modifier = Modifier.width(3.dp))
-                Text(text ="Входящие" , style = MaterialTheme.typography.body2, color = Color.Gray)
+                Text(text =currentProject?.title.toString() , style = MaterialTheme.typography.body2, color = Color.Gray)
             }
             Spacer(modifier = Modifier.width(3.dp))
             Icon(Icons.Default.ArrowDropDown, "dropdown")
@@ -81,118 +81,42 @@ fun ProjectSelectionButton(projectId:String, projectList:List<ProjectWithTasks>)
             expanded = showDropdownMenu,
             onDismissRequest = { showDropdownMenu = false }
         ) {
-            DropdownMenuItem(onClick = { showDropdownMenu = false }) {
-                  Box(modifier = Modifier
-                      .fillMaxHeight()
-                      .fillMaxWidth()){
-                      Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                          Icon(
-                              painter = painterResource(id = R.drawable.incoming_icon),
-                              contentDescription = "Google",
-                              modifier = Modifier
-                                  .size(24.dp)
-                                  .padding(start = 4.dp),
-                              tint = Color.Unspecified
-                          )
-                          Spacer(modifier = Modifier.width(15.dp))
-                          Text(
-                              text = "Входящие",
-                              style = MaterialTheme.typography.body1
-                          )
-                      }
-                  }
-              }
-            DropdownMenuItem(onClick = { showDropdownMenu = false }) {
-                Box(modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()){
-                    Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.incoming_icon),
-                            contentDescription = "Google",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(start = 4.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
-                        Text(
-                            text = "Входящие",
-                            style = MaterialTheme.typography.body1
-                        )
-                    }
-                }
-            }
-            DropdownMenuItem(onClick = { showDropdownMenu = false }) {
-                Box(modifier = Modifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()){
-                    Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.incoming_icon),
-                            contentDescription = "Google",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(start = 4.dp),
-                            tint = Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(15.dp))
-                        Text(
-                            text = "Входящие",
-                            style = MaterialTheme.typography.body1
-                        )
+            projectList.mapIndexed { index, project ->
+                DropdownMenuItem(onClick = {
+                    onProjectSelected(project.projectId)
+                    showDropdownMenu = false
+                }) {
+                    Box(modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()){
+                        Row(modifier = Modifier.align(Alignment.CenterStart)) {
+                            if(project.projectId=="11"){
+                                Icon(
+                                    painter = painterResource(id = R.drawable.incoming_icon),
+                                    contentDescription = "Google",
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .padding(start = 4.dp),
+                                    tint = Color.Unspecified
+                                )
+                            }else{
+                                Canvas(modifier = Modifier.size(20.dp)) {
+                                    drawCircle(
+                                        color = Color.Gray,
+                                        center = Offset(size.width / 2, size.height / 2),
+                                        radius = size.width / 2
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(15.dp))
+                            Text(
+                                text = project.title,
+                                style = MaterialTheme.typography.body1
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//          projectList.map {
-//              DropdownMenuItem(onClick = { /*TODO*/ }) {
-//                  Box(modifier = Modifier
-//                      .padding(horizontal = 20.dp)
-//                      .fillMaxHeight()
-//                      .fillMaxWidth()){
-//                      Row(modifier = Modifier.align(Alignment.CenterStart)) {
-//                          if(it.project.projectId=="1"){
-//                              Icon(
-//                                  painter = painterResource(id = R.drawable.incoming_icon),
-//                                  contentDescription = "Google",
-//                                  modifier = Modifier
-//                                      .size(24.dp)
-//                                      .padding(start = 4.dp),
-//                                  tint = Color.Unspecified
-//                              )
-//                          }else{
-//                              Canvas(modifier = Modifier.size(20.dp)) {
-//                                  drawCircle(
-//                                      color = Color.Gray,
-//                                      center = Offset(size.width / 2, size.height / 2),
-//                                      radius = size.width / 2
-//                                  )
-//                              }
-//                          }
-//                          Spacer(modifier = Modifier.width(15.dp))
-//                          Text(
-//                              text = it.project.title,
-//                              style = MaterialTheme.typography.body1
-//                          )
-//                      }
-//                  }
-//              }
-//          }

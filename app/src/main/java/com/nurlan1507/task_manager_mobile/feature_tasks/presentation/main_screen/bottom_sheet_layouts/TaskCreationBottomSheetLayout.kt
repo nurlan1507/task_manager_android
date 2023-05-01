@@ -157,7 +157,9 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                ProjectSelectionButton(projectId = tasksViewModel.fieldState.value.projectId, projectList = tasksState.value.projects )
+                ProjectSelectionButton(projectId = tasksViewModel.fieldState.value.projectId, projectList = tasksState.value.projects){projectId->
+                    tasksViewModel.onEvent(TasksEvent.EnteredProjectId(projectId))
+                }
                 Box(modifier = Modifier
                     .background(Color(0xFF5E97FF))
                     .size(40.dp)
@@ -166,7 +168,14 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                     },
 
                 ) {
-                    Icon(Icons.Default.Send,"create", tint = Color.White, modifier = Modifier.align(Alignment.Center))
+                    IconButton(onClick = { tasksViewModel.onEvent(TasksEvent.CreateTask) }) {
+                        Icon(
+                            Icons.Default.Send,"create",
+                            tint = Color.White,
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
                 }
             }
         }

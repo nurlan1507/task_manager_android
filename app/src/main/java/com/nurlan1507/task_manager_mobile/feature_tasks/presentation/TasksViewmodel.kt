@@ -9,6 +9,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksRemoteDataSource
+import com.nurlan1507.task_manager_mobile.feature_tasks.data.repository.TasksRepositoryImpl
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskUseCase
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.TasksUseCases
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_users.data.repository.UserRepositoryImpl
@@ -29,7 +34,8 @@ import java.time.YearMonth
 import java.time.temporal.TemporalAdjusters
 
 class TasksViewModel(application: Application):AndroidViewModel(application) {
-    private val repository: UserRepository
+    private val repository: TasksRepositoryImpl
+    private var useCases:TasksUseCases
 
     private val _tasksState = mutableStateOf(TasksState())
     val tasksState: State<TasksState> = _tasksState
@@ -45,8 +51,9 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
 
 
     init{
-        val userDao = TaskManagerDatabase.getDatabase(application).userDao()
-        repository = UserRepositoryImpl(userDao, AuthRemoteDataSource(RestService.authService))
+        val taskDao = TaskManagerDatabase.getDatabase(application).taskDao()
+        repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource())
+        useCases = TasksUseCases(CreateTaskUseCase(repository = repository))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -91,8 +98,15 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                     _error.value
                 }
             }
-
-
+            is TasksEvent.ChangeDateSelectionOption ->{
+                _tasksState.value = _tasksState.value.copy(dateSelectionOption = event.type)
+            }
+            is TasksEvent.CreateTask -> {
+                viewModelScope.launch {
+                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
+                    useCases.createTaskUseCase(task)
+                }
+            }
         }
     }
 }

@@ -48,8 +48,10 @@ import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.DateSelectionView
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.DateSelectionMenu
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.main_screen.utils.daysOfTheWeek
 import java.time.LocalDate
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Calendar
@@ -59,7 +61,7 @@ import java.util.Locale
 @Composable
 fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
     val fieldState = tasksViewModel.fieldState.value
-
+    val tasksState = tasksViewModel.tasksState.value
     val currentDate = LocalDate.ofEpochDay(fieldState.finishDate?.div((1000 * 60 * 60 * 24))
         ?:System.currentTimeMillis().div((1000*60*60*24))
         )
@@ -97,7 +99,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate.atTime(23,59).toEpochSecond(ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -122,12 +124,13 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color.Transparent)
+                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.Tomorrow)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-
+                    tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.Tomorrow))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(fieldState.finishDate?.plus(84*60*60)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -138,7 +141,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                 ) {
                     Icon(
                         painterResource(id = R.drawable.next_day_icon),
-                        contentDescription = "Google",
+                        contentDescription = "Завтра",
                         modifier = Modifier
                             .size(24.dp)
                             .padding(start = 4.dp),
@@ -154,12 +157,13 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color.Transparent)
+                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.Weekend)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-
+                    tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.Weekend))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate( weekend[1].atTime(23,59).toEpochSecond(ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -189,12 +193,13 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .background(Color.Transparent)
+                .background(if(tasksState.dateSelectionOption==DateSelectionMenu.NoDate)Color.LightGray else Color.Transparent)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-
+                    tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.NoDate))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(null))
                 }) {
                 Row(
                     modifier = Modifier
