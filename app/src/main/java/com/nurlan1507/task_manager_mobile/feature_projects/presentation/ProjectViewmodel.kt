@@ -6,8 +6,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_projects.data.repository.ProjectRepositoryImpl
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import kotlinx.coroutines.launch
 
@@ -18,6 +20,12 @@ class ProjectViewmodel(application: Application):AndroidViewModel(application) {
     init{
         val projectDao = TaskManagerDatabase.getDatabase(application).projectDao()
         repository = ProjectRepositoryImpl(projectDao = projectDao ,ProjectRemoteDataSource())
+        viewModelScope.launch {
+            try{
+                repository.insertProject(Project("11","Входящие", R.drawable.incoming_icon.toString()))
+            }catch (e:Exception){
+            }
+        }
     }
     fun onEvent(event:ProjectEvent){
         when(event){

@@ -1,9 +1,12 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.domain.models
 
 import androidx.room.ColumnInfo
+import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.Relation
 import androidx.room.util.TableInfo
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 
 
 @Entity(tableName = "task", foreignKeys = [])
@@ -17,5 +20,15 @@ data class Task(
     val finishDate:Long?=null,
     @ColumnInfo(name = "project_id")
     val projectId:String ="11"
+)
+
+
+data class TaskWithProject(
+    @Embedded val task:Task,
+    @Relation(
+        parentColumn = "project_id",
+        entityColumn = "id"
+    )
+    val project: Project
 )
 

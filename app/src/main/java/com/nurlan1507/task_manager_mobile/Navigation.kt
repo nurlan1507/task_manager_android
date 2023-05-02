@@ -25,7 +25,7 @@ fun Navigation(userViewModel: UserViewModel,tasksViewModel: TasksViewModel, proj
             SignInScreen(userViewModel = userViewModel, window = window, navController = navController)
         }
         composable(Screen.MainScreen.route){
-            MainScreen(navController = navController, windowSize =window, tasksViewModel = tasksViewModel, projectViewmodel = projectViewmodel)
+            MainScreen(navController = navController, windowSize =window, tasksViewModel = tasksViewModel, projectViewmodel = projectViewmodel, userViewModel = userViewModel)
         }
         composable(Screen.DateSelectionScreen.route){
             DateSelectionScreen(tasksViewModel = tasksViewModel)

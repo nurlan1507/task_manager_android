@@ -44,6 +44,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,6 +61,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenDynamicNavigationOption
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -72,6 +74,12 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
     )
     var showProjects by remember { mutableStateOf(false) }
     val state = tasksViewModel.tasksState
+    val scope = rememberCoroutineScope()
+    val hideSheet = {
+        scope.launch {
+            sheetState.hide()
+        }
+    }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -137,7 +145,7 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                             indication = rememberRipple()
                         ) {
                             tasksViewModel.onEvent(TasksEvent.ChangeCategory(it.navOption))
-
+                            hideSheet()
                         }) {
                         Box(modifier = Modifier
                             .padding(horizontal = 20.dp)

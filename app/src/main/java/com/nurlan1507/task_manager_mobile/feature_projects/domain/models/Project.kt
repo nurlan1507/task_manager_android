@@ -13,7 +13,8 @@ data class Project(
     @ColumnInfo(name="id")
     val projectId:String,
     val title:String,
-
+    @ColumnInfo(name = "icon_url")
+    val iconUrl:String
 )
 
 data class ProjectWithTasks(

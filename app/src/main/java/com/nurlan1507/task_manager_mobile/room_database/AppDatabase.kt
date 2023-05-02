@@ -25,7 +25,7 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 
 @Database(
     entities = [User::class, Project::class, Task::class],
-    version = 1  ,
+    version = 2 ,
     exportSchema = false
 )
 abstract class TaskManagerDatabase: RoomDatabase() {
@@ -42,12 +42,10 @@ abstract class TaskManagerDatabase: RoomDatabase() {
                 return tempInstance
             }
             synchronized(this) {
-                val instance = Room.databaseBuilder(context.applicationContext, TaskManagerDatabase::class.java, DATABASE_NAME).build()
+                val instance = Room.databaseBuilder(context.applicationContext, TaskManagerDatabase::class.java, DATABASE_NAME).fallbackToDestructiveMigration().build()
                 INSTANCE = instance
                 return instance
             }
         }
-
     }
-
 }

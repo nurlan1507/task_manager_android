@@ -27,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +47,16 @@ import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectV
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
+import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.DateSelectionBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.MainBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts.TaskCreationBottomSheetLayout
 import com.nurlan1507.task_manager_mobile.global_components.BottomNavigationBar
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
-import com.nurlan1507.task_manager_mobile.ui_components.main_screen.components.TaskView
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.components.CustomAlertDialog
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.components.IncomeTaskView
+import com.nurlan1507.task_manager_mobile.utils.Screen
+import com.nurlan1507.task_manager_mobile.utils.TokenManager
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import kotlinx.coroutines.launch
 
@@ -64,7 +69,7 @@ import kotlinx.coroutines.launch
 )
 
 @Composable
-fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel){
+fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel, userViewModel: UserViewModel){
     val ctx = LocalContext.current as Activity
     val state = tasksViewModel.tasksState
     var showDialog by remember{ mutableStateOf(false) }
@@ -88,6 +93,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
         animationSpec = tween( durationMillis = 150, easing = LinearEasing)
     )
 
+
     val scope = rememberCoroutineScope()
     val showBottomSheet: () -> Unit = {
         scope.launch {
@@ -104,6 +110,13 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
     val hideSecondBottomSheet:() -> Unit={
         scope.launch {
             modalSheetState2.hide()
+        }
+    }
+    LaunchedEffect(Unit){
+        if(TokenManager.refreshToken==null){
+            navController.navigate(Screen.SignInScreen.route){
+                popUpTo(0)
+            }
         }
     }
     BackHandler {
@@ -158,23 +171,16 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
         }
     ){
             if(showDialog){
-                AlertDialog(
-                    onDismissRequest = { },
-                    title = { Text(text = "Вы уверены, что хотите закрыть?", style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.SemiBold)) },
-                    text = { Text(text = "Несохраненные данные удалятся", style = MaterialTheme.typography.body1)},
-                    confirmButton = {
-                        TextButton(onClick = {
-                            showDialog = false ;
-                            tasksViewModel.onEvent(TasksEvent.ClearTextFieldState);
-                            hideBottomSheet()
-                            tasksViewModel.error.value = false
-                            ;}) {
-                            Text(text = "Да", color = Color(0xFF5E97FF))
-                        }
+                CustomAlertDialog(
+                    onConfirm = {
+                        showDialog = false
+                        tasksViewModel.onEvent(TasksEvent.ClearTextFieldState)
+                        hideBottomSheet()
+                        tasksViewModel.error.value = false
                     },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showDialog = false; scope.launch {
+                    onDismiss = {
+                        showDialog = false
+                        scope.launch {
                             tasksViewModel.onEvent(
                                 TasksEvent.ChangeBottomSheetDestination(
                                     BottomSheetLayoutType.AddTask
@@ -183,27 +189,15 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                             showBottomSheet()
                             tasksViewModel.error.value = false
                         }
-                        }) {
-                            Text(text = "Нет", color = Color(0xFF5E97FF))
-                        }
-                    },
-                    properties = DialogProperties(decorFitsSystemWindows = true)
+                    }
                 )
             }
 
 
         Column(modifier = Modifier.padding(it)) {
-
-//            Button(onClick = { /*TODO*/ }, modifier = Modifier.background(Color.Yellow)) {
-//                Text(text = "ASDAS")
-//            }
-//            Button(onClick = { /*TODO*/ }, modifier = Modifier.background(Color.Yellow)) {
-//                Text(text = "ASDAS")
-//            }
-
-            TaskView(Modifier)
-            TaskView(Modifier)
-            TaskView(Modifier)
+            IncomeTaskView(Modifier)
+            IncomeTaskView(Modifier)
+            IncomeTaskView(Modifier)
 
         }
 

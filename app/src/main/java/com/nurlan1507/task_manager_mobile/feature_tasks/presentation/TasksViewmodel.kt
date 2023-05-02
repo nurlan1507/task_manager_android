@@ -82,6 +82,7 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                     is MainScreenNavigationOption.TodayTasks ->{
                         viewModelScope.launch {
                             val tasks = useCases.getTasksUseCase("11")
+                            Log.d("tasksGet", tasks.toString())
                             _tasksState.value =_tasksState.value.copy(tasks = tasks)
                         }
                     }
