@@ -50,7 +50,9 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewMo
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.DateSelectionView
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.DateSelectionMenu
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.daysOfTheWeek
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -62,11 +64,13 @@ import java.util.Locale
 fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
     val fieldState = tasksViewModel.fieldState.value
     val tasksState = tasksViewModel.tasksState.value
-    val currentDate = LocalDate.ofEpochDay(fieldState.finishDate?.div((1000 * 60 * 60 * 24))
-        ?:System.currentTimeMillis().div((1000*60*60*24))
-        )
-    val nextDayLocalDate = currentDate.plusDays(1)
-    val nextDay = nextDayLocalDate.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+    val currentDate = fieldState.finishDate.let {
+        if(it!=null) Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()).toLocalDate()
+        else null
+    }
+
+    val nextDayLocalDate = currentDate?.plusDays(1)
+    val nextDay = nextDayLocalDate?.dayOfWeek?.getDisplayName(TextStyle.SHORT, Locale.getDefault())
     val weekend = tasksViewModel.getNextWeekendDays()
     val weekendString = weekend.joinToString {
         it.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()).toUpperCase()
@@ -99,7 +103,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate.atTime(23,59).toEpochSecond(ZoneOffset.UTC)))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atTime(23,59)?.toEpochSecond(ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -117,7 +121,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                         tint = Color.Gray
                     )
                     Spacer(modifier = Modifier.width(15.dp))
-                    Text(text = currentDate.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())), style = MaterialTheme.typography.body1)
+                    Text(text =if(currentDate==null)"Без даты" else currentDate.format(DateTimeFormatter.ofPattern("d MMMM", Locale.getDefault())), style = MaterialTheme.typography.body1)
                 }
             }
             Divider()
@@ -130,7 +134,8 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     indication = rememberRipple()
                 ) {
                     tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.Tomorrow))
-                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(fieldState.finishDate?.plus(84*60*60)))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atTime(23,59)?.toEpochSecond(
+                        ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -150,7 +155,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     Spacer(modifier = Modifier.width(15.dp))
                     Text(text = "Завтра", style = MaterialTheme.typography.body1)
                 }
-                Text(text = nextDay.toUpperCase(), style = MaterialTheme.typography.body1, modifier = Modifier
+                Text(text = nextDay?:"".toUpperCase(), style = MaterialTheme.typography.body1, modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .offset(x = -20.dp))
             }
@@ -222,6 +227,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
             }
 
             DateSelectionView(currentDate) { timestamp ->
+                tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(null))
                 tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(timestamp))
             }
         }

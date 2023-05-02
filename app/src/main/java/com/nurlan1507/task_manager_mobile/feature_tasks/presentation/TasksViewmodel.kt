@@ -33,8 +33,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.internal.notify
 import java.time.DayOfWeek
+import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
+import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
 
 class TasksViewModel(application: Application):AndroidViewModel(application) {
@@ -62,10 +64,13 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getNextWeekendDays(): List<LocalDate> {
-        val today = LocalDate.now()
+        val today = fieldState.value.finishDate.let {
+            if(it!=null) Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()).toLocalDate()
+            else LocalDate.now()
+        }
         val nextSaturday = today.with(TemporalAdjusters.next(DayOfWeek.SATURDAY))
         val nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY))
-        if(today.dayOfWeek == DayOfWeek.SUNDAY || today.dayOfWeek == DayOfWeek.SATURDAY){
+        if(today.dayOfMonth > nextSaturday.dayOfMonth || today.dayOfMonth > nextSunday.dayOfMonth){
             val followingSaturday = nextSaturday.plusWeeks(1)
             val followingSunday = nextSunday.plusWeeks(1)
             return listOf(followingSaturday,followingSunday)

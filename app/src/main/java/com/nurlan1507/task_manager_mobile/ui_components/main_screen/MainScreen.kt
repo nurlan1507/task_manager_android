@@ -112,13 +112,13 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             modalSheetState2.hide()
         }
     }
-    LaunchedEffect(Unit){
-        if(TokenManager.refreshToken==null){
-            navController.navigate(Screen.SignInScreen.route){
-                popUpTo(0)
-            }
-        }
-    }
+//    LaunchedEffect(Unit){
+//        if(TokenManager.refreshToken==null){
+//            navController.navigate(Screen.SignInScreen.route){
+//                popUpTo(0)
+//            }
+//        }
+//    }
     BackHandler {
         if(modalSheetState2.isVisible){
             hideSecondBottomSheet()

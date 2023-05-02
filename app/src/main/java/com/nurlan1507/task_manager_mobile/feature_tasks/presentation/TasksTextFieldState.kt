@@ -5,6 +5,6 @@ import android.icu.text.CaseMap.Title
 data class TasksTextFieldState(
     val title: String = "",
     val description:String = "",
-    val finishDate:Long? = System.currentTimeMillis(),
+    val finishDate:Long? = System.currentTimeMillis()/1000  ,
     val projectId:String="11"
 )

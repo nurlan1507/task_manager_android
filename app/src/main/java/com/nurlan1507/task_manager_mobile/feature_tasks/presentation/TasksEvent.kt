@@ -19,7 +19,7 @@ sealed class TasksEvent {
     object ClearTextFieldState : TasksEvent()
     data class ChangeBottomSheetDestination(val type: BottomSheetLayoutType?):TasksEvent()
 
-    data class ChangeDateSelectionOption(val type: DateSelectionMenu):TasksEvent()
+    data class ChangeDateSelectionOption(val type: DateSelectionMenu?):TasksEvent()
     object ValidateTextFields : TasksEvent()
 
 

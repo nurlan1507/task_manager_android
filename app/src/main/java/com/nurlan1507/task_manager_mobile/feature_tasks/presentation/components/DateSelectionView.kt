@@ -56,19 +56,24 @@ import kotlin.math.ceil
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DateSelectionView(currentDate:LocalDate, onDateSelected:(Long)->Unit){
+fun DateSelectionView(currentDate:LocalDate?, onDateSelected:(Long)->Unit){
     val ctx = LocalContext.current
     var selectedDate  = currentDate
     val calendar = remember { Calendar.getInstance() }
-    calendar.time = Date.from(selectedDate.atStartOfDay().toInstant(ZoneOffset.UTC))
+
+
     AndroidView(
         { CalendarView(it) },
         modifier = Modifier.fillMaxWidth(),
         update = { views ->
+            if(currentDate==null){
+            }else{
+                views.date = currentDate.atStartOfDay().toEpochSecond(ZoneOffset.UTC)*1000
+            }
             views.setOnDateChangeListener { calendarView, year, month, day ->
-                val calendar = Calendar.getInstance()
-                calendar.set(year,month,day)
-                val timestamp = calendar.timeInMillis
+                val calendar2 = Calendar.getInstance()
+                calendar2.set(year,month,day)
+                val timestamp = calendar2.timeInMillis/1000
                 onDateSelected(timestamp)
             }
         }
