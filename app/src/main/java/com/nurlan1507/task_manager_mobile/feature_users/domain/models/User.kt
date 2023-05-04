@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.feature_users.domain.models
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
@@ -17,5 +18,7 @@ data class User(
     val email:String,
     @SerializedName("username")
     @ColumnInfo(name = "username")
-    val username:String
+    val username:String,
+     val accessToken:String="",
+     val refreshToken:String=""
 )

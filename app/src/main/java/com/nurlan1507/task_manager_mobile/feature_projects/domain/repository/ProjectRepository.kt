@@ -4,6 +4,7 @@ import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectApiRespons
 import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectArrApiResponse
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.ProjectWithTasks
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.restService.NetworkResult
 
 interface ProjectRepository {
@@ -14,6 +15,7 @@ interface ProjectRepository {
     suspend fun getProjectNetwork(id:Int): NetworkResult<ProjectApiResponse>
     suspend fun getProjectsNetwork():NetworkResult<ProjectArrApiResponse>
 
+    suspend fun insertProjectWithTasks(project:Project, tasks:List<Task>)
     suspend fun createProjectNetwork(project: Project):NetworkResult<ProjectApiResponse>
 
 }

@@ -5,7 +5,7 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 data class AuthApiResponse(
     val code:Int,
     val message:String,
-    val data:UserAuthJson
+    val data:User
 )
 
 data class UserAuthJson(

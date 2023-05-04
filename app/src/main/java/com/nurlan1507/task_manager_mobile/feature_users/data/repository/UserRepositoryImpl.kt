@@ -28,7 +28,7 @@ class UserRepositoryImpl(private val dao:UserDao, private val remoteDataSource: 
     }
 
     override suspend fun addUser(user: User) {
-//        dao.insertUser(user)
+        dao.insertUser(user)
     }
 
     override suspend fun googleSignIn(google_id_token:String,username:String, email:String): NetworkResult<AuthApiResponse> {

@@ -39,12 +39,13 @@ class UserViewModel(application: Application):AndroidViewModel(application){
         when(event){
             is UserEvent.GoogleSignInEvent ->{
                 viewModelScope.launch {
-                    var result = userUseCases.googleSignInUseCase(event.id,event.username,event.email)
+                    val result = userUseCases.googleSignInUseCase(event.id,event.username,event.email)
                     _state.value = _state.value.copy(apiCallResult = result.code)
                     resultCode.value = result.code
                     if(resultCode.value == 200){
                         val newUser = User(userId = event.id, username = event.username, email = event.email)
                         userUseCases.addUserLocal(newUser)
+                        _state.value = _state.value.copy(currentUser = newUser)
                     }
                 }
             }
