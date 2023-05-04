@@ -10,14 +10,12 @@ object TokenManager {
     const val SHARED_PREFS_NAME = "task_manager"
     const val ACCESS_TOKEN_KEY = "access_token"
     const val REFRESH_TOKEN_KEY = "refresh_token"
+    const val USER_ID_KEY = "user_id"
 
-    lateinit var context: Context
     private lateinit var  sharedPreferences: SharedPreferences
 
-    @SuppressLint("StaticFieldLeak")
     fun init(ctx: Context) {
-        context = ctx.applicationContext
-        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+        sharedPreferences = ctx.applicationContext.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
     }
 
     fun getAccessToken():String?{
@@ -29,9 +27,15 @@ object TokenManager {
     fun getRefreshToken():String?{
         return sharedPreferences.getString(REFRESH_TOKEN_KEY, null)
     }
-    @SuppressLint("StaticFieldLeak")
     fun setRefreshToken(value:String){
         sharedPreferences.edit().putString(REFRESH_TOKEN_KEY, value).apply()
+    }
+
+    fun getUserId():String?{
+        return sharedPreferences.getString(USER_ID_KEY,null)
+    }
+    fun setUserId(id:String){
+        sharedPreferences.edit().putString(USER_ID_KEY,id).apply()
     }
 
 

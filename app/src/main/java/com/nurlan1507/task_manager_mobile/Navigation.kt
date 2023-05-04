@@ -11,7 +11,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewMo
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.DateSelectionScreen
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.MainScreen
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
-import com.nurlan1507.task_manager_mobile.feature_users.presentation.sign_in.SignInScreen
+import com.nurlan1507.task_manager_mobile.ui_components.sign_in.SignInScreen
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.rememberWindowSize
 

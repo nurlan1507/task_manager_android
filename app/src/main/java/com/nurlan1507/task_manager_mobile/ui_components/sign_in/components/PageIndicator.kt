@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_users.presentation.components
+package com.nurlan1507.task_manager_mobile.ui_components.sign_in.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

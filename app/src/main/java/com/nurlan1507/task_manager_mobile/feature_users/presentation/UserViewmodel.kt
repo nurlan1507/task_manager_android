@@ -46,6 +46,7 @@ class UserViewModel(application: Application):AndroidViewModel(application){
                         val newUser = User(userId = event.id, username = event.username, email = event.email)
                         userUseCases.addUserLocal(newUser)
                         _state.value = _state.value.copy(currentUser = newUser)
+
                     }
                 }
             }

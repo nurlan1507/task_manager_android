@@ -17,6 +17,7 @@ class GoogleSignInUseCase(
         if(result.code == 200){
             TokenManager.setRefreshToken(result.data?.data?.refreshToken.toString())
             TokenManager.setAccessToken(result.data?.data?.accessToken.toString())
+            TokenManager.setUserId(result.data?.data?.userId.toString())
         }
         return result
     }

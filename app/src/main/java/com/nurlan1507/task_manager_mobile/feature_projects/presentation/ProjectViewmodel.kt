@@ -12,11 +12,13 @@ import com.nurlan1507.task_manager_mobile.feature_projects.data.repository.Proje
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.CreateProjectUseCase
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.GetProjectUseCase
-import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.ProjectUseCases
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.GetProjectsNetworkUseCase
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.GetProjectsUseCase
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.use_cases.ProjectUseCases
 import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import kotlinx.coroutines.launch
+import java.util.Random
 
 class ProjectViewmodel(application: Application):AndroidViewModel(application) {
     private var _projectState = mutableStateOf<ProjectState>(ProjectState())
@@ -26,7 +28,12 @@ class ProjectViewmodel(application: Application):AndroidViewModel(application) {
     init{
         val projectDao = TaskManagerDatabase.getDatabase(application).projectDao()
         repository = ProjectRepositoryImpl(projectDao = projectDao ,ProjectRemoteDataSource(RestService.projectService))
-        projectUseCases = ProjectUseCases(GetProjectUseCase(repository),CreateProjectUseCase(repository), GetProjectsUseCase(repository))
+        projectUseCases = ProjectUseCases(
+            GetProjectUseCase(repository),
+            CreateProjectUseCase(repository),
+            GetProjectsNetworkUseCase(repository),
+            GetProjectsUseCase(repository)
+            )
         viewModelScope.launch {
             try{
             }catch (e:Exception){
@@ -47,9 +54,18 @@ class ProjectViewmodel(application: Application):AndroidViewModel(application) {
                     repository.insertProject(event.project)
                 }
             }
+            is ProjectEvent.GetProjectsNetwork ->{
+                viewModelScope.launch {
+                    projectUseCases.getProjectsNetworkUseCase()
+                }
+            }
             is ProjectEvent.GetProjects ->{
                 viewModelScope.launch {
-                    projectUseCases.getProjectsUseCase()
+                    val projects =  projectUseCases.getProjectsUseCase()
+                    val random = Random()
+                    val randomProject = projects.get(random.nextInt(projects.size))
+                    val currentProject = projectUseCases.getProjectUseCase(randomProject.projectId)
+                    _projectState.value = _projectState.value.copy(projectList = projects, currentProject = currentProject)
                 }
             }
         }

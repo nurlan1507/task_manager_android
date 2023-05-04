@@ -16,6 +16,8 @@ data class Project(
     @SerializedName("projectId")
     val projectId:Int,
     val title:String,
+    @ColumnInfo(name = "user_id")
+    val userId:String,
     @ColumnInfo(name = "icon_url")
     val iconUrl:String
 )

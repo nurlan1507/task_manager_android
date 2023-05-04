@@ -9,10 +9,12 @@ import com.nurlan1507.task_manager_mobile.restService.NetworkResult
 
 interface ProjectRepository {
     suspend fun insertProject(project: Project)
-    suspend fun getProject(projectId:String): ProjectWithTasks
+    suspend fun getProject(projectId:Int): ProjectWithTasks
 
     suspend fun createProject(project: Project)
     suspend fun getProjectNetwork(id:Int): NetworkResult<ProjectApiResponse>
+    suspend fun getProjectWithTask(projectId:Int):ProjectWithTasks
+    suspend fun getProjects():List<Project>
     suspend fun getProjectsNetwork():NetworkResult<ProjectArrApiResponse>
 
     suspend fun insertProjectWithTasks(project:Project, tasks:List<Task>)

@@ -1,4 +1,4 @@
-package com.nurlan1507.task_manager_mobile.feature_users.presentation.sign_in
+package com.nurlan1507.task_manager_mobile.ui_components.sign_in
 
 import android.app.Activity
 import android.app.Instrumentation.ActivityResult
@@ -31,7 +31,7 @@ import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.nurlan1507.task_manager_mobile.R
-import com.nurlan1507.task_manager_mobile.feature_users.presentation.components.SignInButton
+import com.nurlan1507.task_manager_mobile.ui_components.sign_in.components.SignInButton
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
@@ -47,7 +47,7 @@ import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectE
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserEvent
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
-import com.nurlan1507.task_manager_mobile.feature_users.presentation.components.SignInCarousel
+import com.nurlan1507.task_manager_mobile.ui_components.sign_in.components.SignInCarousel
 import com.nurlan1507.task_manager_mobile.ui.theme.Typography
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
@@ -81,7 +81,7 @@ fun SignInScreen(userViewModel: UserViewModel,projectViewModel:ProjectViewmodel,
                     val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
                     if(task.isSuccessful){
                         userViewModel.onEvent(event = UserEvent.GoogleSignInEvent(task.result.id.toString(), task.result.displayName.toString(), task.result.email.toString()))
-                        projectViewModel.onEvent(ProjectEvent.GetProjects())
+                        projectViewModel.onEvent(ProjectEvent.GetProjectsNetwork())
                         navController.navigate(Screen.MainScreen.route)
                     }else{
                     }

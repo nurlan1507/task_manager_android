@@ -8,15 +8,19 @@ import androidx.room.Transaction
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.ProjectWithTasks
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
+import retrofit2.http.GET
 
 @Dao
 interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun createProject(project: Project)
 
+    @Query("SELECT * FROM project WHERE user_id=:userId")
+    suspend fun getProjects(userId:String):List<Project>
+
     @Transaction
     @Query("SELECT * FROM project where id=:projectId")
-    suspend fun getProject(projectId:String): ProjectWithTasks
+    suspend fun getProject(projectId:Int): ProjectWithTasks
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: Task)

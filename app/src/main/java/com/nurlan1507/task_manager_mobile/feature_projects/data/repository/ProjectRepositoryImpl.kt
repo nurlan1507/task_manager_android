@@ -18,7 +18,7 @@ class ProjectRepositoryImpl(val projectDao:ProjectDao, val projectRemoteDataSour
         projectDao.createProject(project)
     }
 
-    override suspend fun getProject(projectId: String): ProjectWithTasks {
+    override suspend fun getProject(projectId: Int): ProjectWithTasks {
         return projectDao.getProject(projectId = projectId)
     }
 
@@ -30,6 +30,14 @@ class ProjectRepositoryImpl(val projectDao:ProjectDao, val projectRemoteDataSour
         return saveApiCall {
             projectRemoteDataSource.getProjectById(id,TokenManager.getAccessToken().toString())
         }
+    }
+
+    override suspend fun getProjectWithTask(projecId: Int): ProjectWithTasks {
+        return projectDao.getProject(projectId = projecId)
+    }
+
+    override suspend fun getProjects(): List<Project> {
+        return projectDao.getProjects(TokenManager.getUserId().toString())
     }
 
     override suspend fun getProjectsNetwork(): NetworkResult<ProjectArrApiResponse> {
