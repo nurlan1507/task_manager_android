@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.ProjectWithTasks
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 
 @Dao
 interface ProjectDao {
@@ -16,4 +17,8 @@ interface ProjectDao {
     @Query("SELECT * FROM project where id=:projectId")
     suspend fun getProject(projectId:String): ProjectWithTasks
 
+
+    @Insert
+    suspend fun insertProjectWithTasks(project: Project, task: Task){
+    }
 }

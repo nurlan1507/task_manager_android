@@ -14,8 +14,8 @@ class GoogleSignInUseCase(
         var result = userRepository.googleSignIn(google_id, username,email)
         Log.d("googleAutht", "${result.code} ${result.data?.data?.accessToken}")
         if(result.code == 200){
-            TokenManager.refreshToken = result.data?.data?.refreshToken
-            TokenManager.accessToken = result.data?.data?.accessToken
+//            TokenManager.refreshToken = result.data?.data?.refreshToken
+            TokenManager.setAccessToken(result.data?.data?.accessToken.toString())
         }
         return result
     }

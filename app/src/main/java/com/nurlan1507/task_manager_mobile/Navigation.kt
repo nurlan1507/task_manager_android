@@ -20,9 +20,9 @@ import com.nurlan1507.task_manager_mobile.utils.rememberWindowSize
 fun Navigation(userViewModel: UserViewModel,tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel){
     val navController = rememberNavController()
     val window = rememberWindowSize()
-    NavHost(navController = navController, startDestination = Screen.MainScreen.route){
+    NavHost(navController = navController, startDestination = Screen.SignInScreen.route){
         composable(Screen.SignInScreen.route){
-            SignInScreen(userViewModel = userViewModel, window = window, navController = navController)
+            SignInScreen(userViewModel = userViewModel, window = window, navController = navController, projectViewModel = projectViewmodel)
         }
         composable(Screen.MainScreen.route){
             MainScreen(navController = navController, windowSize =window, tasksViewModel = tasksViewModel, projectViewmodel = projectViewmodel, userViewModel = userViewModel)

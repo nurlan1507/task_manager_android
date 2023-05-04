@@ -9,6 +9,7 @@ abstract class BaseApiResponse {
         try {
             val response = api()
             val body =response.body()
+            Log.d("apiError",body.toString()    )
             val errorBody = response.errorBody()?.string()
             Log.d("googleAuthRBody", response.message())
             if(response.isSuccessful){
@@ -17,10 +18,11 @@ abstract class BaseApiResponse {
                     return NetworkResult.Success(data=body, code=response.code())
                 }?:return NetworkResult.Failure( message ="body is empty", code = response.code())
             } else{
-                return NetworkResult.Failure( message = JSONObject(errorBody).getString("message"),  code = response.code())
+                return NetworkResult.Failure( message = errorBody,  code = response.code())
             }
         }catch (e:Exception){
             e.printStackTrace()
+            Log.d("apiError", e.message.toString())
             return NetworkResult.Failure( message ="Api call failed" + e.message.toString(), code = 409)
         }
     }

@@ -1,5 +1,6 @@
 package com.nurlan1507.task_manager_mobile.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
@@ -10,20 +11,27 @@ object TokenManager {
     const val ACCESS_TOKEN_KEY = "access_token"
     const val REFRESH_TOKEN_KEY = "refresh_token"
 
-    lateinit var sharedPrefs:SharedPreferences
-    lateinit var sharedPrefsEditor:Editor
+    lateinit var context: Context
+    private lateinit var  sharedPreferences: SharedPreferences
 
-    var accessToken:String?
-        get() = sharedPrefs.getString(ACCESS_TOKEN_KEY,null)
-        set(value) {sharedPrefsEditor.putString(ACCESS_TOKEN_KEY, value)}
-    var refreshToken:String?
-        get() = sharedPrefs.getString(REFRESH_TOKEN_KEY,null)
-        set(value) {sharedPrefsEditor.putString(REFRESH_TOKEN_KEY, value)}
+    @SuppressLint("StaticFieldLeak")
+    fun init(ctx: Context) {
+        context = ctx.applicationContext
+        sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+    }
 
-
-    fun init(ctx:Context){
-        sharedPrefs = ctx.getSharedPreferences(SHARED_PREFS_NAME,Activity.MODE_PRIVATE)
-        sharedPrefsEditor = sharedPrefs.edit()
+    fun getAccessToken():String?{
+        return sharedPreferences.getString(ACCESS_TOKEN_KEY, null)
+    }
+    fun setAccessToken(value:String?){
+        sharedPreferences.edit().putString(ACCESS_TOKEN_KEY, value).apply()
+    }
+    fun getRefreshToken():String?{
+        return sharedPreferences.getString(REFRESH_TOKEN_KEY, null)
+    }
+    @SuppressLint("StaticFieldLeak")
+    fun setRefreshToken(value:String){
+        sharedPreferences.edit().putString(REFRESH_TOKEN_KEY, value).apply()
     }
 
 

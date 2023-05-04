@@ -157,7 +157,7 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
             Row(modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                ProjectSelectionButton(projectId = tasksViewModel.fieldState.value.projectId, projectList = tasksState.value.projects){projectId->
+                ProjectSelectionButton(projectId = tasksViewModel.fieldState.value.projectId.toInt(), projectList = tasksState.value.projects){projectId->
                     tasksViewModel.onEvent(TasksEvent.EnteredProjectId(projectId))
                 }
                 Box(modifier = Modifier

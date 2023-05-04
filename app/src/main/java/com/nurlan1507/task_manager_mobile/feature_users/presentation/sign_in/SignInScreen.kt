@@ -43,6 +43,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.nurlan1507.task_manager_mobile.MainActivity
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserEvent
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.components.SignInCarousel
@@ -51,7 +53,7 @@ import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
 
 @Composable
-fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController: NavController){
+fun SignInScreen(userViewModel: UserViewModel,projectViewModel:ProjectViewmodel, window: WindowSize, navController: NavController){
     val ctx = LocalContext.current
     val activity = LocalContext.current as Activity
 
@@ -79,6 +81,7 @@ fun SignInScreen(userViewModel: UserViewModel, window: WindowSize, navController
                     val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(intent)
                     if(task.isSuccessful){
                         userViewModel.onEvent(event = UserEvent.GoogleSignInEvent(task.result.id.toString(), task.result.displayName.toString(), task.result.email.toString()))
+                        projectViewModel.onEvent(ProjectEvent.GetProjects())
                         navController.navigate(Screen.MainScreen.route)
                     }else{
                     }

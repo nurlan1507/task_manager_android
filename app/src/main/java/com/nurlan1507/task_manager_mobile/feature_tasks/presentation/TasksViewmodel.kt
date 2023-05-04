@@ -105,7 +105,7 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                 _fieldState.value = _fieldState.value.copy(finishDate = event.value)
             }
             is TasksEvent.EnteredProjectId->{
-                _fieldState.value = _fieldState.value.copy(projectId = event.value)
+                _fieldState.value = _fieldState.value.copy(projectId = event.value.toString())
             }
             is TasksEvent.ClearTextFieldState->{
                 _fieldState.value = TasksTextFieldState()
@@ -123,8 +123,9 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             }
             is TasksEvent.CreateTask -> {
                 viewModelScope.launch {
-                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
-                    useCases.createTaskUseCase(task)
+//                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
+//                    useCases.createTaskUseCase(task)
+//                    _fieldState.value = TasksTextFieldState()
                 }
             }
             is TasksEvent.CreateProject -> {

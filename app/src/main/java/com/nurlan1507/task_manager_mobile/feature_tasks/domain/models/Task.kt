@@ -19,7 +19,9 @@ data class Task(
     @ColumnInfo(name = "finish_date")
     val finishDate:Long?=null,
     @ColumnInfo(name = "project_id")
-    val projectId:String ="11"
+    val projectId:String ="11",
+    @ColumnInfo(name = "status")
+    val status:Int?=0
 )
 
 

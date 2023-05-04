@@ -36,7 +36,7 @@ import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 
 @Composable
-fun ProjectSelectionButton(projectId:String, projectList:List<Project>, onProjectSelected:(String)->Unit) {
+fun ProjectSelectionButton(projectId:Int, projectList:List<Project>, onProjectSelected:(Int)->Unit) {
     val currentProject = projectList.find { it.projectId == projectId }
     var showDropdownMenu by remember {
         mutableStateOf(false)
@@ -50,7 +50,7 @@ fun ProjectSelectionButton(projectId:String, projectList:List<Project>, onProjec
         }
     ){
         Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)){
-            if(projectId == "11"){
+            if(projectId == 11){
                 Icon(painter = painterResource(id = R.drawable.incoming_icon), contentDescription = "Срок выполнения", tint = Color.Unspecified)
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(text = "Входящие" , style = MaterialTheme.typography.body2, color = Color.Gray)
@@ -82,7 +82,7 @@ fun ProjectSelectionButton(projectId:String, projectList:List<Project>, onProjec
                         .fillMaxHeight()
                         .fillMaxWidth()){
                         Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                            if(project.projectId=="11"){
+                            if(project.projectId==11){
                                 Icon(
                                     painter = painterResource(id = R.drawable.incoming_icon),
                                     contentDescription = "Google",

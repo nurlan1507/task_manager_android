@@ -6,7 +6,11 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.domain.repositry.TasksRe
 
 class CreateTaskUseCase(private val repository:TasksRepositoryImpl) {
     suspend operator fun invoke(task: Task){
-        repository.insertTask(task)
+        try{
+            repository.insertTask(task)
+        }catch (e:Exception){
+
+        }
     }
 
 }

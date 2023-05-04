@@ -1,6 +1,7 @@
 package com.nurlan1507.task_manager_mobile.restService
 
 import com.google.gson.GsonBuilder
+import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectService
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit
 class RestService {
     companion object{
         val BASE_URL = "http://3.83.68.211:3000/"
+//        val BASE_URL = "http://localhost:3000/"
         val okHttpClient = OkHttpClient.Builder().callTimeout(15, TimeUnit.SECONDS).build()
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
@@ -18,5 +20,6 @@ class RestService {
             .client(okHttpClient)
             .build()
         val authService = retrofit.create(AuthService::class.java)
+        val projectService = retrofit.create(ProjectService::class.java)
     }
 }
