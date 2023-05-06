@@ -15,14 +15,17 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksRemoteDataSourc
 import com.nurlan1507.task_manager_mobile.feature_tasks.data.repository.TasksRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskNetworkUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetDueTodayTasks
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksNetworkUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.TasksUseCases
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_users.data.repository.UserRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_users.domain.repository.UserRepository
+import com.nurlan1507.task_manager_mobile.restService.ResponseModel
 import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
@@ -59,14 +62,17 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
     private var _error = mutableStateOf(false)
     var error: MutableState<Boolean> = _error
 
-
+    private var _callResult = mutableStateOf(ResponseModel())
+    val callResult:State<ResponseModel> = _callResult
     init{
         val taskDao = TaskManagerDatabase.getDatabase(application).taskDao()
-        repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource())
+        repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource(RestService.tasksService))
         useCases = TasksUseCases(
             CreateTaskUseCase(repository),
             GetTasksUseCase(repository),
-            GetDueTodayTasks(repository)
+            GetDueTodayTasks(repository),
+            GetTasksNetworkUseCase(repository),
+            CreateTaskNetworkUseCase(repository)
         )
     }
 
@@ -124,6 +130,14 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             is TasksEvent.CreateTask -> {
                 viewModelScope.launch {
                     val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate, projectId = _fieldState.value.projectId)
+                    val netWorkResult = useCases.createTaskNetworkUseCase(task = task)
+                    if(netWorkResult.code!=200){
+                        _callResult.value = _callResult.value.copy(
+                            code = netWorkResult.code,
+                            message = netWorkResult.message
+                        )
+                        return@launch
+                    }
                     val newTask = useCases.createTaskUseCase(task)
                     if(_tasksState.value.tasks.isNotEmpty() && newTask.projectId == _tasksState.value.tasks[0].project.projectId){
                         val projectInfo = _tasksState.value.tasks[0].project
@@ -132,7 +146,6 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                             task = newTask
                         )
                         val list = listOf(newTaskWithProjectInstance)
-
 //                        _tasksState.value.tasks.toMutableList().add(newTaskWithProjectInstance)
                         _tasksState.value = _tasksState.value.copy(tasks = _tasksState.value.tasks + list)
                     }
@@ -142,15 +155,15 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             is TasksEvent.GetTasks -> {
                 viewModelScope.launch{
                     val projectId = event.projectId
-//                    when(_tasksState.value.currentCategory.route){
-//                        ProfileBottomRoutes.TODAY_ROUTE ->{
-//                            val tasks =  useCases.getDueTodayTasks()
-//                            _tasksState.value = _tasksState.value.copy(tasks = tasks)
-//                            return@launch
-//                        }else ->{
-//
-//                        }
-//                    }
+                    when(_tasksState.value.currentCategory.route){
+                        ProfileBottomRoutes.TODAY_ROUTE ->{
+                            val tasks =  useCases.getDueTodayTasks()
+                            _tasksState.value = _tasksState.value.copy(tasks = tasks)
+                            return@launch
+                        }else ->{
+
+                        }
+                    }
                     val projectTasks = useCases.getTasksUseCase(1)
                     _tasksState.value = _tasksState.value.copy(tasks = projectTasks)
                 }

@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.restService
 
 import com.google.gson.GsonBuilder
 import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectService
+import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksService
 import com.nurlan1507.task_manager_mobile.feature_users.api.AuthService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -21,5 +22,6 @@ class RestService {
             .build()
         val authService = retrofit.create(AuthService::class.java)
         val projectService = retrofit.create(ProjectService::class.java)
+        val tasksService = retrofit.create(TasksService::class.java)
     }
 }

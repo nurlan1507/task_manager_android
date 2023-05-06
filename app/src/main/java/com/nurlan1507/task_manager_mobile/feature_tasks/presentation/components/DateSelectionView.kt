@@ -72,7 +72,7 @@ fun DateSelectionView(currentDate:LocalDate?, onDateSelected:(Long)->Unit){
             }
             views.setOnDateChangeListener { calendarView, year, month, day ->
                 val calendar2 = Calendar.getInstance()
-                calendar2.set(year,month,day,23,59)
+                calendar2.set(year,month,day,23,59,0)
                 val timestamp = calendar2.timeInMillis/1000
                 onDateSelected(timestamp)
             }
