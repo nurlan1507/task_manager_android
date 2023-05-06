@@ -17,7 +17,7 @@ data class Project(
     val projectId:Int,
     val title:String,
     @ColumnInfo(name = "user_id")
-    val userId:String,
+    val userId:String="",
     @ColumnInfo(name = "icon_url")
     val iconUrl:String
 )

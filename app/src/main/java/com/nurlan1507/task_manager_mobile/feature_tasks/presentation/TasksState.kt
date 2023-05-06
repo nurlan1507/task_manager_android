@@ -12,7 +12,7 @@ data class TasksState (
     val currentCategory: MainScreenNavigationOption = MainScreenNavigationOption.TodayTasks,
     val dateSelectionOption: DateSelectionMenu? = null,
     val currentProject: ProjectWithTasks? = null,
-    val projects:List<Project> = listOf(Project(projectId = 11, title = "Входящие", R.drawable.incoming_icon.toString()), Project(projectId = 22, title = "Работа",R.drawable.incoming_icon.toString())),
+    val projects:MutableList<Project> = mutableListOf(Project(projectId = 1, title = "Входящие", iconUrl = R.drawable.incoming_icon.toString()), Project(projectId = 22, title = "Работа",iconUrl = R.drawable.incoming_icon.toString())),
     val tasks:List<TaskWithProject> = listOf<TaskWithProject>(),
     val task: Task = Task(0)
 

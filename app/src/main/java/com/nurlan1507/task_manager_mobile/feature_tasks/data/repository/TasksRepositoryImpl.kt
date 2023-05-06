@@ -11,8 +11,17 @@ class TasksRepositoryImpl(private val taskDao:TasksDao, private val remoteDataSo
         return taskDao.insertTask(task)
     }
 
-    override suspend fun getTasks(projectId: String): List<TaskWithProject> {
+    override suspend fun getTask(taskId: Long): Task {
+        return taskDao.getTask(taskId)
+    }
+
+    override suspend fun getTasks(projectId: Int): List<TaskWithProject> {
         return taskDao.getTasks(projectId = projectId)
     }
+
+    override suspend fun getTasksDueToday(date:Long): List<TaskWithProject> {
+        return taskDao.getTasksDueToday(date)
+    }
+
 
 }

@@ -15,6 +15,8 @@ interface ProjectRepository {
     suspend fun getProjectNetwork(id:Int): NetworkResult<ProjectApiResponse>
     suspend fun getProjectWithTask(projectId:Int):ProjectWithTasks
     suspend fun getProjects():List<Project>
+
+    suspend fun getProjectsWithTasksDueToday(today:Long):List<ProjectWithTasks>
     suspend fun getProjectsNetwork():NetworkResult<ProjectArrApiResponse>
 
     suspend fun insertProjectWithTasks(project:Project, tasks:List<Task>)

@@ -23,7 +23,7 @@ abstract class BaseApiResponse {
         }catch (e:Exception){
             e.printStackTrace()
             Log.d("apiError", e.message.toString())
-            return NetworkResult.Failure( message ="Api call failed" + e.message.toString(), code = 409)
+            return NetworkResult.Failure( message ="Api call failed" + e.message.toString(), code = 500)
         }
     }
 }

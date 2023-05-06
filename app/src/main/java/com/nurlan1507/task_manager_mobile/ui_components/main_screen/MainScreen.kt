@@ -71,8 +71,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel, userViewModel: UserViewModel){
     val ctx = LocalContext.current as Activity
-    val state = tasksViewModel.tasksState
+    val taskState = tasksViewModel.tasksState
+    val projectState = projectViewmodel.projectState.value
     var showDialog by remember{ mutableStateOf(false) }
+
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
         confirmStateChange = {
@@ -112,13 +114,9 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
             modalSheetState2.hide()
         }
     }
-//    LaunchedEffect(Unit){
-//        if(TokenManager.refreshToken==null){
-//            navController.navigate(Screen.SignInScreen.route){
-//                popUpTo(0)
-//            }
-//        }
-//    }
+    LaunchedEffect(projectState.projectList){
+        tasksViewModel.onEvent(TasksEvent.GetTasks(1))
+    }
     BackHandler {
         if(modalSheetState2.isVisible){
             hideSecondBottomSheet()
@@ -132,7 +130,7 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar<String>(title = state.value.currentCategory.title){
+            TopBar<String>(title = taskState.value.currentCategory.title){
 
             }
         },
@@ -195,10 +193,12 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
 
 
         Column(modifier = Modifier.padding(it)) {
-            IncomeTaskView(Modifier)
-            IncomeTaskView(Modifier)
-            IncomeTaskView(Modifier)
-
+//            projectState.currentProject?.tasks?.map {
+//                IncomeTaskView(Modifier)
+//            }
+            taskState.value.tasks.map {
+                IncomeTaskView(modifier = Modifier)
+            }
         }
 
     }
@@ -210,22 +210,20 @@ fun MainScreen(navController: NavController,windowSize: WindowSize, tasksViewMod
                     is BottomSheetLayoutType.Profile -> {
                         Log.d("currentDestination", "main")
                         MainBottomSheetLayout(
-                            tasksViewModel = tasksViewModel,
-                            sheetState = modalSheetState
+                           tasksViewModel, modalSheetState
                         )
                     }
                     is BottomSheetLayoutType.Nofifications ->{
                         Log.d("currentDestination", "notifications")
                         MainBottomSheetLayout(
-                            tasksViewModel = tasksViewModel,
-                            sheetState = modalSheetState
+                            tasksViewModel, modalSheetState
+
                         )
                     }
                     is BottomSheetLayoutType.Search -> {
                         Log.d("currentDestination", "search")
                         MainBottomSheetLayout(
-                            tasksViewModel = tasksViewModel,
-                            sheetState = modalSheetState
+                            tasksViewModel, modalSheetState
                         )
                     }
                     is BottomSheetLayoutType.AddTask ->{

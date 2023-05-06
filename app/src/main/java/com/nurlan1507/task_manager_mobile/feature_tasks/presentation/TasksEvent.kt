@@ -15,12 +15,12 @@ sealed class TasksEvent {
     data class EnteredProjectId(val value:Int):TasksEvent()
 
     object  CreateTask:TasksEvent()
-    data class CreateProject(val project: Project):TasksEvent()
     object ClearTextFieldState : TasksEvent()
     data class ChangeBottomSheetDestination(val type: BottomSheetLayoutType?):TasksEvent()
 
     data class ChangeDateSelectionOption(val type: DateSelectionMenu?):TasksEvent()
     object ValidateTextFields : TasksEvent()
 
+    data class GetTasks(val projectId:Int):TasksEvent()
 
 }

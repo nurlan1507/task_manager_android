@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -57,23 +58,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.R
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
-import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenDynamicNavigationOption
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {
+fun MainBottomSheetLayout(taskViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {
     val navigationOptions = listOf(
-        MainScreenDynamicNavigationOption(MainScreenNavigationOption.IncomingTasks, 1),
-        MainScreenDynamicNavigationOption(MainScreenNavigationOption.TodayTasks, 3),
-        MainScreenDynamicNavigationOption(MainScreenNavigationOption.UpcomingTasks, 7),
-        MainScreenDynamicNavigationOption(MainScreenNavigationOption.Filter, 0)
+        MainScreenNavigationOption.TodayTasks,
+        MainScreenNavigationOption.UpcomingTasks,
+        MainScreenNavigationOption.Filter
     )
     var showProjects by remember { mutableStateOf(false) }
-    val state = tasksViewModel.tasksState
+    val state = taskViewModel.tasksState
     val scope = rememberCoroutineScope()
     val hideSheet = {
         scope.launch {
@@ -139,21 +140,22 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .height(50.dp)
-                        .background(if (it.navOption == state.value.currentCategory) Color.LightGray else Color.Transparent)
+                        .background(if (it == state.value.currentCategory) Color.LightGray else Color.Transparent)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = rememberRipple()
                         ) {
-                            tasksViewModel.onEvent(TasksEvent.ChangeCategory(it.navOption))
+                            taskViewModel.onEvent(TasksEvent.ChangeCategory(it))
                             hideSheet()
                         }) {
+
                         Box(modifier = Modifier
                             .padding(horizontal = 20.dp)
                             .fillMaxHeight()
                             .fillMaxWidth()){
-                            Row(modifier = Modifier.align(Alignment.CenterStart)) {
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxHeight()){
                                 Icon(
-                                    painter = painterResource(id = it.navOption.icon),
+                                    painter = painterResource(id = it.icon),
                                     contentDescription = "Google",
                                     modifier = Modifier
                                         .size(24.dp)
@@ -161,15 +163,9 @@ fun MainBottomSheetLayout(tasksViewModel: TasksViewModel,sheetState: ModalBottom
                                     tint = Color.Unspecified
                                 )
                                 Spacer(modifier = Modifier.width(15.dp))
-                                Text(text = it.navOption.title, style = MaterialTheme.typography.body1)
+                                Text(text = it.title, style = MaterialTheme.typography.body1)
                             }
-                            Text(
-                                text = it.dynamicField.toString(),
-                                style = MaterialTheme.typography.body1,
-                                modifier = Modifier.align(Alignment.CenterEnd)
-                            )
                         }
-
                     }
                 }
             }

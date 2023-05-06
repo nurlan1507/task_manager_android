@@ -6,6 +6,9 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithPr
 interface TasksRepository {
     suspend fun insertTask(task: Task):Long
 
-    suspend fun getTasks(projectId:String): List<TaskWithProject>
+    suspend fun getTask(taskId:Long):Task
+    suspend fun getTasks(projectId:Int): List<TaskWithProject>
+    suspend fun getTasksDueToday(today:Long):List<TaskWithProject>
+
 
 }

@@ -32,4 +32,7 @@ interface ProjectDao {
             insertTask(task.apply { projectId = project.projectId })
         }
     }
+
+    @Query("SELECT DISTINCT * FROM project p join task t on p.id=project_id")
+    suspend fun getTodayDueTasks():List<ProjectWithTasks>
 }

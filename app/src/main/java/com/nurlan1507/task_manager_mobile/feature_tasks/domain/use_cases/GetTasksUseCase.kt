@@ -5,7 +5,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
 
 class GetTasksUseCase(private val repository:TasksRepositoryImpl) {
-    suspend operator fun invoke(projectId:String): List<TaskWithProject> {
+    suspend operator fun invoke(projectId:Int): List<TaskWithProject> {
         return repository.getTasks(projectId = projectId)
     }
 }

@@ -10,10 +10,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksRemoteDataSource
 import com.nurlan1507.task_manager_mobile.feature_tasks.data.repository.TasksRepositoryImpl
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskUseCase
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetDueTodayTasks
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.TasksUseCases
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
@@ -24,6 +27,7 @@ import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOptions
+import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.ProfileBottomRoutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,7 +63,11 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
     init{
         val taskDao = TaskManagerDatabase.getDatabase(application).taskDao()
         repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource())
-        useCases = TasksUseCases(CreateTaskUseCase(repository) , GetTasksUseCase(repository))
+        useCases = TasksUseCases(
+            CreateTaskUseCase(repository),
+            GetTasksUseCase(repository),
+            GetDueTodayTasks(repository)
+        )
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -79,21 +87,13 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event: TasksEvent){
         when(event){
             is TasksEvent.ChangeCategory ->{
-                _tasksState.value = _tasksState.value.copy(currentCategory = event.category)
-                when(event.category){
-                    is MainScreenNavigationOption.TodayTasks ->{
-                        viewModelScope.launch {
-                            val tasks = useCases.getTasksUseCase("11")
-                            Log.d("tasksGet", tasks.toString())
-                            _tasksState.value =_tasksState.value.copy(tasks = tasks)
-                        }
-                    }
-                    else ->{}
+                viewModelScope.launch {
+                    _tasksState.value = _tasksState.value.copy(currentCategory = event.category)
                 }
-
             }
             is TasksEvent.EnteredTitle ->{
                 _fieldState.value = _fieldState.value.copy(title = event.value)
@@ -105,7 +105,7 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                 _fieldState.value = _fieldState.value.copy(finishDate = event.value)
             }
             is TasksEvent.EnteredProjectId->{
-                _fieldState.value = _fieldState.value.copy(projectId = event.value.toString())
+                _fieldState.value = _fieldState.value.copy(projectId = event.value)
             }
             is TasksEvent.ClearTextFieldState->{
                 _fieldState.value = TasksTextFieldState()
@@ -123,15 +123,37 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             }
             is TasksEvent.CreateTask -> {
                 viewModelScope.launch {
-//                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate)
-//                    useCases.createTaskUseCase(task)
-//                    _fieldState.value = TasksTextFieldState()
+                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate, projectId = _fieldState.value.projectId)
+                    val newTask = useCases.createTaskUseCase(task)
+                    if(_tasksState.value.tasks.isNotEmpty() && newTask.projectId == _tasksState.value.tasks[0].project.projectId){
+                        val projectInfo = _tasksState.value.tasks[0].project
+                        val newTaskWithProjectInstance = TaskWithProject(
+                            project = Project(projectId = projectInfo.projectId, title = projectInfo.title, iconUrl = projectInfo.iconUrl, userId = projectInfo.userId),
+                            task = newTask
+                        )
+                        val list = listOf(newTaskWithProjectInstance)
+
+//                        _tasksState.value.tasks.toMutableList().add(newTaskWithProjectInstance)
+                        _tasksState.value = _tasksState.value.copy(tasks = _tasksState.value.tasks + list)
+                    }
+                    _fieldState.value = TasksTextFieldState()
                 }
             }
-            is TasksEvent.CreateProject -> {
-//                viewModelScope.launch{
-//                    repository.
-//                }
+            is TasksEvent.GetTasks -> {
+                viewModelScope.launch{
+                    val projectId = event.projectId
+//                    when(_tasksState.value.currentCategory.route){
+//                        ProfileBottomRoutes.TODAY_ROUTE ->{
+//                            val tasks =  useCases.getDueTodayTasks()
+//                            _tasksState.value = _tasksState.value.copy(tasks = tasks)
+//                            return@launch
+//                        }else ->{
+//
+//                        }
+//                    }
+                    val projectTasks = useCases.getTasksUseCase(1)
+                    _tasksState.value = _tasksState.value.copy(tasks = projectTasks)
+                }
             }
         }
     }

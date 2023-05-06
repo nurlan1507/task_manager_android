@@ -82,6 +82,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: ModalBottomSheetState, navController:NavController){
@@ -168,7 +169,12 @@ fun TaskCreationBottomSheetLayout(tasksViewModel: TasksViewModel, sheetState: Mo
                     },
 
                 ) {
-                    IconButton(onClick = { tasksViewModel.onEvent(TasksEvent.CreateTask) }) {
+                    IconButton(onClick = {
+                        tasksViewModel.onEvent(TasksEvent.CreateTask)
+                        scope.launch {
+                            sheetState.hide()
+                        }
+                    }) {
                         Icon(
                             Icons.Default.Send,"create",
                             tint = Color.White,

@@ -4,5 +4,6 @@ data class ProjectUseCases (
     val getProjectUseCase:GetProjectUseCase,
     val createProjectUseCase:CreateProjectUseCase,
     val getProjectsNetworkUseCase: GetProjectsNetworkUseCase,
-    val getProjectsUseCase: GetProjectsUseCase
+    val getProjectsUseCase: GetProjectsUseCase,
+    val getTodayTaskUseCase:GetTodaysProjectUseCase
 )

@@ -6,14 +6,14 @@ import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.repository.ProjectRepository
 import com.nurlan1507.task_manager_mobile.restService.NetworkResult
 
-class GetProjectsNetworkUseCase(private val repository: ProjectRepository?) {
+class GetProjectsNetworkUseCase(private val repository: ProjectRepository) {
     suspend operator fun invoke(): NetworkResult<ProjectArrApiResponse>? {
-        val projects = repository?.getProjectsNetwork()
-        Log.d("getProjects", projects?.code.toString())
-        if (projects?.code == 200) {
+        val projects = repository.getProjectsNetwork()
+        Log.d("getProjects", projects.code.toString())
+        if (projects.code == 200) {
             val projectList = projects.data!!.projects
             projectList.forEach {
-                repository?.insertProjectWithTasks(
+                repository.insertProjectWithTasks(
                     project = Project(
                         projectId = it.projectId,
                         userId = it.user_id,
