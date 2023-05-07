@@ -14,6 +14,7 @@ data class TasksState (
     val currentProject: ProjectWithTasks? = null,
     val projects:MutableList<Project> = mutableListOf(Project(projectId = 1, title = "Входящие", iconUrl = R.drawable.incoming_icon.toString()), Project(projectId = 22, title = "Работа",iconUrl = R.drawable.incoming_icon.toString())),
     val tasks:List<TaskWithProject> = listOf<TaskWithProject>(),
-    val task: Task = Task(0)
+    val task: Task = Task(0),
+    val deletedTask:Task?=null
 
 )

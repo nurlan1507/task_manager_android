@@ -37,5 +37,9 @@ class TasksRepositoryImpl(private val taskDao:TasksDao, private val remoteDataSo
         }
     }
 
+    override suspend fun deleteTask(task: Task) {
+        taskDao.deleteTask(task = task)
+    }
+
 
 }

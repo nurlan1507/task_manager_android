@@ -1,6 +1,7 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -22,4 +23,7 @@ interface TasksDao{
 
     @Query("SELECT * FROM task where task_id=:taskId")
     suspend fun getTask(taskId:Long):Task
+
+    @Delete
+    suspend fun deleteTask(task:Task)
 }

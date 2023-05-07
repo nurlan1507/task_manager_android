@@ -2,11 +2,13 @@ package com.nurlan1507.task_manager_mobile.ui_components.sign_in
 
 import android.app.Activity
 import android.app.Instrumentation.ActivityResult
+import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,6 +54,7 @@ import com.nurlan1507.task_manager_mobile.ui.theme.Typography
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SignInScreen(userViewModel: UserViewModel,projectViewModel:ProjectViewmodel, window: WindowSize, navController: NavController){
     val ctx = LocalContext.current

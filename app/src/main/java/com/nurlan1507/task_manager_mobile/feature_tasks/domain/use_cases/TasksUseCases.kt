@@ -4,6 +4,7 @@ data class TasksUseCases (
     val createTaskUseCase:CreateTaskUseCase,
     val getTasksUseCase:GetTasksUseCase,
     val getDueTodayTasks:GetDueTodayTasks,
+    val deleteTaskUseCase:DeleteTaskUseCase,
     //network
     val getTasksNetworkUseCase: GetTasksNetworkUseCase,
     val createTaskNetworkUseCase: CreateTaskNetworkUseCase

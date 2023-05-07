@@ -73,7 +73,6 @@ class ProjectViewmodel(application: Application):AndroidViewModel(application) {
                 viewModelScope.launch {
                     val projects = projectUseCases.getProjectsNetworkUseCase()
 
-
                 }
             }
             is ProjectEvent.GetProjects ->{

@@ -14,4 +14,5 @@ interface TasksRepository {
     suspend fun getTasksNetwork(projectId:Int,token:String):NetworkResult<List<Task>>
 
     suspend fun createTaskNetwork(task:Task, token:String): NetworkResult<Task>
+    suspend fun deleteTask(task:Task)
 }

@@ -17,6 +17,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskNetworkUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.CreateTaskUseCase
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.DeleteTaskUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetDueTodayTasks
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksNetworkUseCase
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.use_cases.GetTasksUseCase
@@ -71,8 +72,9 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
             CreateTaskUseCase(repository),
             GetTasksUseCase(repository),
             GetDueTodayTasks(repository),
+            DeleteTaskUseCase(repository),
             GetTasksNetworkUseCase(repository),
-            CreateTaskNetworkUseCase(repository)
+            CreateTaskNetworkUseCase(repository),
         )
     }
 
@@ -153,19 +155,27 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
                 }
             }
             is TasksEvent.GetTasks -> {
-                viewModelScope.launch{
-                    val projectId = event.projectId
-                    when(_tasksState.value.currentCategory.route){
-                        ProfileBottomRoutes.TODAY_ROUTE ->{
-                            val tasks =  useCases.getDueTodayTasks()
-                            _tasksState.value = _tasksState.value.copy(tasks = tasks)
-                            return@launch
-                        }else ->{
-
-                        }
-                    }
+                viewModelScope.launch {
+//                    val projectId = event.projectId
+//                    when(_tasksState.value.currentCategory.route){
+//                        ProfileBottomRoutes.TODAY_ROUTE ->{
+//                            val tasks =  useCases.getDueTodayTasks()
+//                            _tasksState.value = _tasksState.value.copy(tasks = tasks)
+//                            return@launch
+//                        }else ->{
+//
+//                        }
+//                    }
                     val projectTasks = useCases.getTasksUseCase(1)
                     _tasksState.value = _tasksState.value.copy(tasks = projectTasks)
+                }
+            }
+            is TasksEvent.DeleteTask ->{
+                viewModelScope.launch {
+                    useCases.deleteTaskUseCase(task = event.task)
+                    _tasksState.value = _tasksState.value.copy(deletedTask = event.task, tasks = _tasksState.value.tasks.filterNot{
+                            item -> item.task == event.task
+                    })
                 }
             }
         }
