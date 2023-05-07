@@ -3,6 +3,8 @@ package com.nurlan1507.task_manager_mobile.ui_components.main_screen.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -29,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,32 +49,20 @@ fun IncomeTaskView(
     onDeleteButtonClicked: (Task) -> Unit,
 ) {
     val status = remember{
-        mutableStateOf(taskWithProject.task.status)
+        mutableStateOf(true)
     }
-    val scope = rememberCoroutineScope()
     val date =
         if (taskWithProject.task.finishDate != null) Date(taskWithProject.task.finishDate * 1000L)
         else "Без даты"
-    AnimatedVisibility(
-        visible = status.value == 0,
-        enter = expandVertically(
-            animationSpec = tween(200)
-        ),
-        exit = slideOutHorizontally(
-            animationSpec = tween(300)
-        )
-    ) {
+
         Box(modifier = Modifier
             .fillMaxWidth()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple()
             ) {
-                scope.launch {
-                    status.value = 1
-                    delay(300)
-                    onDeleteButtonClicked(taskWithProject.task)
-                }
+//                status.value= !status.value
+                onDeleteButtonClicked(taskWithProject.task)
             }) {
             Row(
                 modifier = Modifier
@@ -112,7 +103,7 @@ fun IncomeTaskView(
                     }
                 }
             }
-        }
+
     }
 }
 

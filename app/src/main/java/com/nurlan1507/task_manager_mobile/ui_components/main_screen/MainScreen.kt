@@ -11,6 +11,8 @@ import androidx.compose.animation.core.EaseInBounce
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
@@ -231,15 +233,27 @@ fun MainScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(taskState.value.tasks) { task ->
-
-                IncomeTaskView(
-                    taskWithProject = task,
-                    onDeleteButtonClicked = {
-                        scope.launch {
-                            tasksViewModel.onEvent(TasksEvent.DeleteTask(task.task))
+                val isVisible = remember{
+                    mutableStateOf(true)
+                }
+                AnimatedVisibility(
+                    modifier = Modifier.wrapContentSize(),
+                    visible =isVisible.value,
+                    enter = fadeIn(animationSpec = tween(1000)),
+                    exit = fadeOut(animationSpec = tween(1000))
+                ){
+                    IncomeTaskView(
+                        taskWithProject = task,
+                        onDeleteButtonClicked = {
+                            scope.launch {
+                                isVisible.value = !isVisible.value
+                                delay(1000)
+                                tasksViewModel.onEvent(TasksEvent.DeleteTask(task.task))
+                            }
                         }
-                    }
-                )
+                    )
+                }
+
             }
         }
 

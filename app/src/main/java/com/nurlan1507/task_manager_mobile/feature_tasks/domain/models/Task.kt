@@ -24,7 +24,7 @@ data class Task(
     @ColumnInfo(name = "project_id")
     var projectId:Int =11,
     @ColumnInfo(name = "status")
-    val status:Int?=0,
+    var status:Int?=0,
 
 )
 
