@@ -33,6 +33,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainSc
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOptions
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.ProfileBottomRoutes
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -167,13 +168,16 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
 //                        }
 //                    }
                     val projectTasks = useCases.getTasksUseCase(1)
+                    Log.d("projectTasks", projectTasks.toString())
                     _tasksState.value = _tasksState.value.copy(tasks = projectTasks)
                 }
             }
             is TasksEvent.DeleteTask ->{
                 viewModelScope.launch {
+                    _tasksState.value = _tasksState.value.copy(deletedTask = event.task)
+                    delay(300)
                     useCases.deleteTaskUseCase(task = event.task)
-                    _tasksState.value = _tasksState.value.copy(deletedTask = event.task, tasks = _tasksState.value.tasks.filterNot{
+                    _tasksState.value = _tasksState.value.copy(tasks = _tasksState.value.tasks.filterNot{
                             item -> item.task == event.task
                     })
                 }

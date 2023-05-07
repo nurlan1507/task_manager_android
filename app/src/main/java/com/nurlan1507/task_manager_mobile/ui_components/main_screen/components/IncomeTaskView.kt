@@ -45,6 +45,7 @@ import java.util.Date
 
 @Composable
 fun IncomeTaskView(
+    deletedTask:Task?,
     taskWithProject: TaskWithProject,
     onDeleteButtonClicked: (Task) -> Unit,
 ) {
@@ -54,13 +55,18 @@ fun IncomeTaskView(
     val date =
         if (taskWithProject.task.finishDate != null) Date(taskWithProject.task.finishDate * 1000L)
         else "Без даты"
-
+    AnimatedVisibility(
+        modifier = Modifier.wrapContentSize(),
+        visible =taskWithProject.task != deletedTask,
+        enter = fadeIn(animationSpec = tween(300)),
+        exit = slideOutHorizontally(animationSpec = tween(300))
+    ){
         Box(modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
-            ) {
+                interactionSource = remember{ MutableInteractionSource() },
+                indication = null
+            ){
 //                status.value= !status.value
                 onDeleteButtonClicked(taskWithProject.task)
             }) {
@@ -103,6 +109,8 @@ fun IncomeTaskView(
                     }
                 }
             }
+    }
+
 
     }
 }

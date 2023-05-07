@@ -140,7 +140,7 @@ fun MainScreen(
             modalSheetState2.hide()
         }
     }
-    LaunchedEffect(projectState.projectList) {
+    LaunchedEffect(Unit) {
         tasksViewModel.onEvent(TasksEvent.GetTasks(1))
     }
     BackHandler {
@@ -233,26 +233,14 @@ fun MainScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(taskState.value.tasks) { task ->
-                val isVisible = remember{
-                    mutableStateOf(true)
-                }
-                AnimatedVisibility(
-                    modifier = Modifier.wrapContentSize(),
-                    visible =isVisible.value,
-                    enter = fadeIn(animationSpec = tween(1000)),
-                    exit = fadeOut(animationSpec = tween(1000))
-                ){
                     IncomeTaskView(
+                        deletedTask=taskState.value.deletedTask,
                         taskWithProject = task,
                         onDeleteButtonClicked = {
-                            scope.launch {
-                                isVisible.value = !isVisible.value
-                                delay(1000)
-                                tasksViewModel.onEvent(TasksEvent.DeleteTask(task.task))
-                            }
+                            tasksViewModel.onEvent(TasksEvent.DeleteTask(it))
                         }
                     )
-                }
+
 
             }
         }
