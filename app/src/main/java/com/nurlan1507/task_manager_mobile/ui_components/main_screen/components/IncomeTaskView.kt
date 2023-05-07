@@ -41,17 +41,19 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 @Composable
-fun IncomeTaskView(taskWithProject: TaskWithProject, onDeleteButtonClicked: (Task) -> Unit) {
+fun IncomeTaskView(
+    taskWithProject: TaskWithProject,
+    onDeleteButtonClicked: (Task) -> Unit,
+) {
+    val status = remember{
+        mutableStateOf(taskWithProject.task.status)
+    }
+    val scope = rememberCoroutineScope()
     val date =
         if (taskWithProject.task.finishDate != null) Date(taskWithProject.task.finishDate * 1000L)
         else "Без даты"
-    val isVisible = remember {
-        mutableStateOf(true)
-    }
-    val scope = rememberCoroutineScope()
     AnimatedVisibility(
-        modifier = Modifier.wrapContentSize(),
-        visible = isVisible.value,
+        visible = status.value == 0,
         enter = expandVertically(
             animationSpec = tween(200)
         ),
@@ -66,8 +68,8 @@ fun IncomeTaskView(taskWithProject: TaskWithProject, onDeleteButtonClicked: (Tas
                 indication = rememberRipple()
             ) {
                 scope.launch {
-                    isVisible.value = !isVisible.value
-                    delay(500)
+                    status.value = 1
+                    delay(300)
                     onDeleteButtonClicked(taskWithProject.task)
                 }
             }) {
@@ -110,7 +112,6 @@ fun IncomeTaskView(taskWithProject: TaskWithProject, onDeleteButtonClicked: (Tas
                     }
                 }
             }
-
         }
     }
 }

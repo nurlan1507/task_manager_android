@@ -1,8 +1,11 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.domain.models
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import androidx.room.util.TableInfo
@@ -21,7 +24,8 @@ data class Task(
     @ColumnInfo(name = "project_id")
     var projectId:Int =11,
     @ColumnInfo(name = "status")
-    val status:Int?=0
+    val status:Int?=0,
+
 )
 
 
@@ -31,6 +35,6 @@ data class TaskWithProject(
         parentColumn = "project_id",
         entityColumn = "id"
     )
-    val project: Project
+    val project: Project,
 )
 

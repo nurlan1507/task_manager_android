@@ -14,6 +14,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -230,10 +231,13 @@ fun MainScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(taskState.value.tasks) { task ->
+
                 IncomeTaskView(
                     taskWithProject = task,
                     onDeleteButtonClicked = {
-                        tasksViewModel.onEvent(TasksEvent.DeleteTask(task.task))
+                        scope.launch {
+                            tasksViewModel.onEvent(TasksEvent.DeleteTask(task.task))
+                        }
                     }
                 )
             }
