@@ -4,4 +4,5 @@ sealed class Screen(val route:String){
     object SignInScreen:Screen("signIn")
     object MainScreen:Screen("mainScreen")
     object DateSelectionScreen:Screen("dateSelectionScreen")
+    object CreateProjectScreen:Screen("createProjectScreen")
 }

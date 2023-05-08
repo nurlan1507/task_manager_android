@@ -63,11 +63,12 @@ import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectV
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
+import com.nurlan1507.task_manager_mobile.utils.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MainBottomSheetLayout(taskViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {
+fun MainBottomSheetLayout(navController: NavController,taskViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {
     val navigationOptions = listOf(
         MainScreenNavigationOption.TodayTasks,
         MainScreenNavigationOption.UpcomingTasks,
@@ -188,7 +189,7 @@ fun MainBottomSheetLayout(taskViewModel: TasksViewModel,sheetState: ModalBottomS
                     )
                 }
                 Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = { navController.navigate(Screen.CreateProjectScreen.route)}) {
                         Icon(Icons.Default.Add, "create a project")
                     }
                     IconButton(onClick = { showProjects = !showProjects }) {

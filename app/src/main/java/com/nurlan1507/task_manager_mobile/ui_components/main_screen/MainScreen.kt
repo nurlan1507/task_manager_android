@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
@@ -227,72 +228,69 @@ fun MainScreen(
                 }
             )
         }
-        LazyColumn(
-            modifier = Modifier
-                .padding(it),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(taskState.value.tasks) { task ->
+        Column(modifier = Modifier.padding(it)) {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(taskState.value.tasks) { task ->
                     IncomeTaskView(
-                        deletedTask=taskState.value.deletedTask,
+                        deletedTask = taskState.value.deletedTask,
                         taskWithProject = task,
                         onDeleteButtonClicked = {
                             tasksViewModel.onEvent(TasksEvent.DeleteTask(it))
                         }
                     )
 
-
+                }
             }
         }
+    }
+    ModalBottomSheetLayout(
+        sheetContent = {
+            Column(modifier = Modifier.heightIn(min = 1.dp)) {
+                when (tasksViewModel.currentBottomSheetLayout.value) {
+                    is BottomSheetLayoutType.Profile -> {
+                        Log.d("currentDestination", "main")
+                        MainBottomSheetLayout(
+                            navController,tasksViewModel, modalSheetState
+                        )
+                    }
 
-        ModalBottomSheetLayout(
-            sheetContent = {
-                Column(modifier = Modifier.heightIn(min = 1.dp)) {
-                    when (tasksViewModel.currentBottomSheetLayout.value) {
-                        is BottomSheetLayoutType.Profile -> {
-                            Log.d("currentDestination", "main")
-                            MainBottomSheetLayout(
-                                tasksViewModel, modalSheetState
-                            )
-                        }
+                    is BottomSheetLayoutType.Nofifications -> {
+                        Log.d("currentDestination", "notifications")
+                        MainBottomSheetLayout(
+                            navController,tasksViewModel, modalSheetState
+                        )
+                    }
 
-                        is BottomSheetLayoutType.Nofifications -> {
-                            Log.d("currentDestination", "notifications")
-                            MainBottomSheetLayout(
-                                tasksViewModel, modalSheetState
+                    is BottomSheetLayoutType.Search -> {
+                        Log.d("currentDestination", "search")
+                        MainBottomSheetLayout(
+                            navController,tasksViewModel, modalSheetState
+                        )
+                    }
 
-                            )
-                        }
+                    is BottomSheetLayoutType.AddTask -> {
+                        Log.d("currentDestination", "add_task")
+                        TaskCreationBottomSheetLayout(
+                            tasksViewModel = tasksViewModel,
+                            sheetState = modalSheetState2,
+                            navController = navController
+                        )
+                    }
 
-                        is BottomSheetLayoutType.Search -> {
-                            Log.d("currentDestination", "search")
-                            MainBottomSheetLayout(
-                                tasksViewModel, modalSheetState
-                            )
-                        }
-
-                        is BottomSheetLayoutType.AddTask -> {
-                            Log.d("currentDestination", "add_task")
-                            TaskCreationBottomSheetLayout(
-                                tasksViewModel = tasksViewModel,
-                                sheetState = modalSheetState2,
-                                navController = navController
-                            )
-                        }
-
-                        else -> {
-                            Box {}
-                        }
+                    else -> {
+                        Box {}
                     }
                 }
-            },
-            sheetState = modalSheetState,
-        ) {}
-        ModalBottomSheetLayout(
-            sheetContent = { DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel) },
-            sheetState = modalSheetState2
-        ) {
+            }
+        },
+        sheetState = modalSheetState,
+    ) {}
+    ModalBottomSheetLayout(
+        sheetContent = { DateSelectionBottomSheetLayout(tasksViewModel = tasksViewModel) },
+        sheetState = modalSheetState2
+    ) {
 
-        }
     }
 }

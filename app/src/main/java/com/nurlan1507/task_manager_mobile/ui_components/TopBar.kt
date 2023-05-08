@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 fun <T> TopBar(
     title: String,
     actionData: List<T> = listOf(),
-    action: @Composable() (T) -> Unit
+    action: @Composable() (T) -> Unit={}
     // TODO: support overflow menu here with the remainder of the list
 ){
     var menuExpanded by remember { mutableStateOf(false) }

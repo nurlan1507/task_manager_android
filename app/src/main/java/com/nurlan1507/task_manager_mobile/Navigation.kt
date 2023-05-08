@@ -11,6 +11,7 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewMo
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.DateSelectionScreen
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.MainScreen
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
+import com.nurlan1507.task_manager_mobile.ui_components.create_project_screen.CreateProjectScreen
 import com.nurlan1507.task_manager_mobile.ui_components.sign_in.SignInScreen
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.rememberWindowSize
@@ -29,6 +30,9 @@ fun Navigation(userViewModel: UserViewModel,tasksViewModel: TasksViewModel, proj
         }
         composable(Screen.DateSelectionScreen.route){
             DateSelectionScreen(tasksViewModel = tasksViewModel)
+        }
+        composable(Screen.CreateProjectScreen.route){
+            CreateProjectScreen(navController = navController, projectViewmodel =projectViewmodel )
         }
     }
 }
