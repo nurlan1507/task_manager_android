@@ -57,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
@@ -93,9 +94,9 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     navController: NavController,
     windowSize: WindowSize,
-    tasksViewModel: TasksViewModel,
-    projectViewmodel: ProjectViewmodel,
-    userViewModel: UserViewModel
+    tasksViewModel: TasksViewModel = hiltViewModel(),
+    projectViewmodel: ProjectViewmodel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
     val ctx = LocalContext.current as Activity
     val taskState = tasksViewModel.tasksState

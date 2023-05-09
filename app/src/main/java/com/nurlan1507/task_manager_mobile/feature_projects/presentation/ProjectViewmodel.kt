@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_projects.api.ProjectRemoteDataSource
@@ -24,39 +25,28 @@ import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.ProfileBottomRoutes
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.Random
+import javax.inject.Inject
 
-class ProjectViewmodel(application: Application):AndroidViewModel(application) {
+@HiltViewModel
+class ProjectViewmodel @Inject constructor(
+    val repository: ProjectRepositoryImpl,
+    val projectUseCases: ProjectUseCases
+):ViewModel(){
     private var _projectState = mutableStateOf<ProjectState>(ProjectState())
     val projectState: State<ProjectState> = _projectState
 
     private var _textFieldState = mutableStateOf<ProjectTextFieldState>(ProjectTextFieldState())
     val textFieldState:State<ProjectTextFieldState> = _textFieldState
 
-    val projectUseCases: ProjectUseCases
-    private val repository: ProjectRepositoryImpl
+
 
     private var _error = mutableStateOf<ResponseModel>(ResponseModel())
     val error:State<ResponseModel> = _error
-    init{
-        val projectDao = TaskManagerDatabase.getDatabase(application).projectDao()
-        repository = ProjectRepositoryImpl(projectDao = projectDao ,ProjectRemoteDataSource(RestService.projectService))
-        projectUseCases = ProjectUseCases(
-            GetProjectUseCase(repository),
-            CreateProjectUseCase(repository),
-            CreateProjectNetworkUseCase(repository),
-            GetProjectsNetworkUseCase(repository),
-            GetProjectsUseCase(repository),
-            GetTodaysProjectUseCase(repository),
-        )
-        viewModelScope.launch {
-            try{
-            }catch (e:Exception){
-            }
-        }
-    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun onEvent(event:ProjectEvent){
         when(event){

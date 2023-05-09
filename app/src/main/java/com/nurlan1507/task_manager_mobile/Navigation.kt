@@ -3,6 +3,7 @@
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -18,21 +19,26 @@ import com.nurlan1507.task_manager_mobile.utils.rememberWindowSize
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Navigation(userViewModel: UserViewModel,tasksViewModel: TasksViewModel, projectViewmodel: ProjectViewmodel){
+fun Navigation(){
     val navController = rememberNavController()
     val window = rememberWindowSize()
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+
+
     NavHost(navController = navController, startDestination = Screen.SignInScreen.route){
         composable(Screen.SignInScreen.route){
-            SignInScreen(userViewModel = userViewModel, window = window, navController = navController, projectViewModel = projectViewmodel)
+            SignInScreen(window = window, navController = navController)
         }
         composable(Screen.MainScreen.route){
-            MainScreen(navController = navController, windowSize =window, tasksViewModel = tasksViewModel, projectViewmodel = projectViewmodel, userViewModel = userViewModel)
+            MainScreen(navController = navController, windowSize =window)
         }
         composable(Screen.DateSelectionScreen.route){
-            DateSelectionScreen(tasksViewModel = tasksViewModel)
+            DateSelectionScreen()
         }
         composable(Screen.CreateProjectScreen.route){
-            CreateProjectScreen(navController = navController, projectViewmodel =projectViewmodel )
+            CreateProjectScreen(navController = navController )
         }
     }
 }

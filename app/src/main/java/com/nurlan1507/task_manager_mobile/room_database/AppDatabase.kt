@@ -36,16 +36,16 @@ abstract class TaskManagerDatabase: RoomDatabase() {
         const val DATABASE_NAME = "room_db"
         @Volatile
         private var INSTANCE: TaskManagerDatabase? = null
-        fun getDatabase(context: Context): TaskManagerDatabase {
-            val tempInstance = INSTANCE
-            if (tempInstance != null) {
-                return tempInstance
-            }
-            synchronized(this) {
-                val instance = Room.databaseBuilder(context.applicationContext, TaskManagerDatabase::class.java, DATABASE_NAME).fallbackToDestructiveMigration().build()
-                INSTANCE = instance
-                return instance
-            }
-        }
+//        fun getDatabase(context: Context): TaskManagerDatabase {
+//            val tempInstance = INSTANCE
+//            if (tempInstance != null) {
+//                return tempInstance
+//            }
+//            synchronized(this) {
+//                val instance = Room.databaseBuilder(context.applicationContext, TaskManagerDatabase::class.java, DATABASE_NAME).fallbackToDestructiveMigration().build()
+//                INSTANCE = instance
+//                return instance
+//            }
+//        }
     }
 }

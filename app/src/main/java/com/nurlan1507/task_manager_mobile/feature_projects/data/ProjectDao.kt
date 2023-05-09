@@ -13,7 +13,7 @@ import retrofit2.http.GET
 @Dao
 interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createProject(project: Project):Int
+    suspend fun createProject(project: Project):Long
 
     @Query("SELECT * FROM project WHERE user_id=:userId")
     suspend fun getProjects(userId:String):List<Project>

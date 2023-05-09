@@ -14,7 +14,7 @@ data class Project(
     @PrimaryKey
     @ColumnInfo(name="id")
     @SerializedName("projectId")
-    val projectId:Int?=null,
+    val projectId:Long ?=null,
     val title:String,
     @ColumnInfo(name = "user_id")
     val userId:String="",
@@ -57,7 +57,7 @@ data class ProjectWithTasks(
     )
 
 data class ProjectWithTasksR(
-    val projectId:Int,
+    val projectId:Long,
     val title:String,
     val user_id:String,
     @SerializedName("tasks")

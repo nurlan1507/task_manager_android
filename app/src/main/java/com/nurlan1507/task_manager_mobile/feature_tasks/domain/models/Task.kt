@@ -22,9 +22,9 @@ data class Task(
     @ColumnInfo(name = "finish_date")
     val finishDate:Long?=null,
     @ColumnInfo(name = "project_id")
-    var projectId:Int =11,
+    var projectId:Long  =11,
     @ColumnInfo(name = "status")
-    var status:Int?=0,
+    var status:Long?=0,
 
 )
 

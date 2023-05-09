@@ -13,7 +13,7 @@ sealed class TasksEvent {
     data class EnteredDescription(val value:String):TasksEvent()
     data class EnteredFinishDate(val value:Long?):TasksEvent()
 
-    data class EnteredProjectId(val value:Int):TasksEvent()
+    data class EnteredProjectId(val value:Long):TasksEvent()
 
     object  CreateTask:TasksEvent()
     object ClearTextFieldState : TasksEvent()

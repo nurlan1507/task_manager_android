@@ -22,7 +22,7 @@ class ProjectRepositoryImpl(val projectDao:ProjectDao, val projectRemoteDataSour
         return projectDao.getProject(projectId = projectId)
     }
 
-    override suspend fun createProject(project: Project):Int {
+    override suspend fun createProject(project: Project):Long {
         return projectDao.createProject(project)
     }
 

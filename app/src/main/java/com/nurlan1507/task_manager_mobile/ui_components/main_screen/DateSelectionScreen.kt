@@ -35,9 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.components.DateSelectionView
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DateSelectionScreen(tasksViewModel: TasksViewModel){}
+fun DateSelectionScreen(tasksViewModel: TasksViewModel= hiltViewModel()){}

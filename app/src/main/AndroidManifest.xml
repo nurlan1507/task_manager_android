@@ -7,6 +7,7 @@
 
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"

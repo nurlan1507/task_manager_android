@@ -18,22 +18,21 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.use_cases.UserUse
 import com.nurlan1507.task_manager_mobile.restService.RestService
 import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class UserViewModel(application: Application):AndroidViewModel(application){
-    private val repository: UserRepository
-    private val userUseCases:UserUseCases
+@HiltViewModel
+class UserViewModel @Inject constructor(
+    val repository: UserRepositoryImpl,
+    val userUseCases: UserUseCases
+):ViewModel(){
 
     private val _state = mutableStateOf<UserState>(UserState())
     val state: State<UserState> = _state
     var resultCode = MutableStateFlow(0)
-    init{
-        val userDao = TaskManagerDatabase.getDatabase(application).userDao()
-        repository = UserRepositoryImpl(userDao,AuthRemoteDataSource(RestService.authService))
-        userUseCases = UserUseCases(GetUserUseCase(repository),GoogleSignInUseCase(repository), AddUserToLocalDb(repository))
-    }
 
     fun onEvent(event:UserEvent){
         when(event){

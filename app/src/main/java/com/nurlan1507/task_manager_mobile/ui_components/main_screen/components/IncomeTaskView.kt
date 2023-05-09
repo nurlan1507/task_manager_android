@@ -64,11 +64,11 @@ fun IncomeTaskView(
         Box(modifier = Modifier
             .fillMaxWidth()
             .clickable(
-                interactionSource = remember{ MutableInteractionSource() },
-                indication = null
-            ){
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple()
+            ) {
 //                status.value= !status.value
-                onDeleteButtonClicked(taskWithProject.task)
+
             }) {
             Row(
                 modifier = Modifier
@@ -83,7 +83,11 @@ fun IncomeTaskView(
                         .offset(y = 4.dp)
                         .background(Color(0xFFA0BCF0), shape = CircleShape)
                         .border(width = 2.dp, color = Color(0xFF5E97FF), shape = CircleShape)
-                        .clickable {
+
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication =null
+                        ){
                             onDeleteButtonClicked(taskWithProject.task)
                         }
                 )

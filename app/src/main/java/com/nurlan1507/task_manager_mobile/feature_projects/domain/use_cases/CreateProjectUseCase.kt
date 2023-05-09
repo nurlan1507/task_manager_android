@@ -5,7 +5,7 @@ import com.nurlan1507.task_manager_mobile.feature_projects.domain.repository.Pro
 
 class CreateProjectUseCase(private val repository: ProjectRepository) {
 
-    suspend operator fun invoke(newProject:Project):Int{
+    suspend operator fun invoke(newProject:Project):Long{
         return repository.createProject(newProject)
     }
 }

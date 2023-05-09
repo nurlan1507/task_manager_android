@@ -23,14 +23,17 @@ import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewMo
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.ui.theme.Task_manager_mobileTheme
 import com.nurlan1507.task_manager_mobile.utils.TokenManager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         TokenManager.init(this)
-        val userViewModel: UserViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
-        val tasksViewModel:TasksViewModel = ViewModelProvider(this).get(TasksViewModel::class.java)
-        val projectViewModel:ProjectViewmodel = ViewModelProvider(this).get(ProjectViewmodel::class.java)
+//        val userViewModel: UserViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+//        val tasksViewModel:TasksViewModel = ViewModelProvider(this).get(TasksViewModel::class.java)
+//        val projectViewModel:ProjectViewmodel = ViewModelProvider(this).get(ProjectViewmodel::class.java)
+
         super.onCreate(savedInstanceState)
         setContent {
             Task_manager_mobileTheme {
@@ -39,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation(userViewModel = userViewModel,tasksViewModel = tasksViewModel, projectViewmodel = projectViewModel)
+                    Navigation()
                 }
             }
         }

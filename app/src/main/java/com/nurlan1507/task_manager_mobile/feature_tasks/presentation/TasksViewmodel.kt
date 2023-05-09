@@ -9,6 +9,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_tasks.api.TasksRemoteDataSource
@@ -32,6 +33,7 @@ import com.nurlan1507.task_manager_mobile.room_database.TaskManagerDatabase
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOptions
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.ProfileBottomRoutes
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,10 +49,13 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.temporal.TemporalAdjusters
+import javax.inject.Inject
 
-class TasksViewModel(application: Application):AndroidViewModel(application) {
-    private val repository: TasksRepositoryImpl
-    private var useCases:TasksUseCases
+@HiltViewModel
+class TasksViewModel @Inject constructor(
+    val repository: TasksRepositoryImpl,
+    val useCases: TasksUseCases
+):ViewModel() {
 
     private val _tasksState = mutableStateOf(TasksState())
     val tasksState: State<TasksState> = _tasksState
@@ -66,18 +71,6 @@ class TasksViewModel(application: Application):AndroidViewModel(application) {
 
     private var _callResult = mutableStateOf(ResponseModel())
     val callResult:State<ResponseModel> = _callResult
-    init{
-        val taskDao = TaskManagerDatabase.getDatabase(application).taskDao()
-        repository = TasksRepositoryImpl(taskDao =taskDao , TasksRemoteDataSource(RestService.tasksService))
-        useCases = TasksUseCases(
-            CreateTaskUseCase(repository),
-            GetTasksUseCase(repository),
-            GetDueTodayTasks(repository),
-            DeleteTaskUseCase(repository),
-            GetTasksNetworkUseCase(repository),
-            CreateTaskNetworkUseCase(repository),
-        )
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getNextWeekendDays(): List<LocalDate> {

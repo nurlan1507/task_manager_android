@@ -37,6 +37,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.sign_in.components.SignI
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.NavOptionsBuilder
@@ -47,6 +48,8 @@ import com.google.android.gms.tasks.Task
 import com.nurlan1507.task_manager_mobile.MainActivity
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
+import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserEvent
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.ui_components.sign_in.components.SignInCarousel
@@ -56,7 +59,7 @@ import com.nurlan1507.task_manager_mobile.utils.TokenManager
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun SignInScreen(userViewModel: UserViewModel,projectViewModel:ProjectViewmodel, window: WindowSize, navController: NavController){
+fun SignInScreen(userViewModel: UserViewModel = hiltViewModel(),projectViewModel:ProjectViewmodel = hiltViewModel(), window: WindowSize, navController: NavController){
     val ctx = LocalContext.current
     val activity = LocalContext.current as Activity
 

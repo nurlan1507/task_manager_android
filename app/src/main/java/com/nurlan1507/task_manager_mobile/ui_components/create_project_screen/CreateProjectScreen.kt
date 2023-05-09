@@ -63,6 +63,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
@@ -74,7 +75,7 @@ import kotlinx.coroutines.launch
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectViewmodel) {
+fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectViewmodel = hiltViewModel()) {
     val state = projectViewmodel.textFieldState.value
     val colorSelectionSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
