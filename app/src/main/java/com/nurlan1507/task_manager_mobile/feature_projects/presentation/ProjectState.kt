@@ -6,7 +6,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainSc
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.ProfileBottomRoutes
 
 data class ProjectState(
-    val currentProject:ProjectWithTasks?= null,
+    val currentProject:Project?= null,
     val projectList:List<Project>?=null,
     val currentCategory:MainScreenNavigationOption = MainScreenNavigationOption.TodayTasks
 )

@@ -18,12 +18,12 @@ class ProjectRepositoryImpl(val projectDao:ProjectDao, val projectRemoteDataSour
         projectDao.createProject(project)
     }
 
-    override suspend fun getProject(projectId: Int): ProjectWithTasks {
+    override suspend fun getProject(projectId: Int): Project {
         return projectDao.getProject(projectId = projectId)
     }
 
-    override suspend fun createProject(project: Project) {
-        projectDao.createProject(project)
+    override suspend fun createProject(project: Project):Int {
+        return projectDao.createProject(project)
     }
 
     override suspend fun getProjectNetwork(id:Int): NetworkResult<ProjectApiResponse> {
@@ -32,9 +32,9 @@ class ProjectRepositoryImpl(val projectDao:ProjectDao, val projectRemoteDataSour
         }
     }
 
-    override suspend fun getProjectWithTask(projecId: Int): ProjectWithTasks {
-        return projectDao.getProject(projectId = projecId)
-    }
+//    override suspend fun getProjectWithTask(projecId: Int): ProjectWithTasks {
+//        return projectDao.getProject(projectId = projecId)
+//    }
 
     override suspend fun getProjects(): List<Project> {
         return projectDao.getProjects(TokenManager.getUserId().toString())

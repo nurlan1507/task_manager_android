@@ -75,7 +75,7 @@ fun ProjectSelectionButton(projectId:Int, projectList:List<Project>, onProjectSe
         ) {
             projectList.mapIndexed { index, project ->
                 DropdownMenuItem(onClick = {
-                    onProjectSelected(project.projectId)
+                    onProjectSelected(project.projectId!!)
                     showDropdownMenu = false
                 }) {
                     Box(modifier = Modifier

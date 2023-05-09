@@ -13,14 +13,13 @@ import retrofit2.http.GET
 @Dao
 interface ProjectDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createProject(project: Project)
+    suspend fun createProject(project: Project):Int
 
     @Query("SELECT * FROM project WHERE user_id=:userId")
     suspend fun getProjects(userId:String):List<Project>
 
-    @Transaction
     @Query("SELECT * FROM project where id=:projectId")
-    suspend fun getProject(projectId:Int): ProjectWithTasks
+    suspend fun getProject(projectId:Int): Project
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: Task)
@@ -29,7 +28,7 @@ interface ProjectDao {
     suspend fun insertProjectWithTasks(project: Project, tasks: List<Task>) {
         createProject(project)
         tasks.forEach { task ->
-            insertTask(task.apply { projectId = project.projectId })
+            insertTask(task.apply { projectId = project.projectId!! })
         }
     }
 

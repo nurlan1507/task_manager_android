@@ -141,9 +141,11 @@ fun MainScreen(
             modalSheetState2.hide()
         }
     }
-    LaunchedEffect(Unit) {
+
+    LaunchedEffect(projectState.currentProject) {
         tasksViewModel.onEvent(TasksEvent.GetTasks(1))
     }
+
     BackHandler {
         if (modalSheetState2.isVisible) {
             hideSecondBottomSheet()

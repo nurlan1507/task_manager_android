@@ -1,5 +1,9 @@
 package com.nurlan1507.task_manager_mobile.ui_components.create_project_screen
 
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,8 +19,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
@@ -39,8 +49,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,14 +64,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.global_components.TopBar
+import com.nurlan1507.task_manager_mobile.ui_components.create_project_screen.bottom_sheet_layouts.ColorSelectionBottomSheetLayout
+import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.O)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectViewmodel) {
-    val state = projectViewmodel.projectState.value
+    val state = projectViewmodel.textFieldState.value
+    val colorSelectionSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+    )
+    val scope = rememberCoroutineScope()
+    val isFavorite = remember{
+        mutableStateOf(false)
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -65,7 +92,10 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                 modifier = Modifier.padding(
                     horizontal = 15.dp
                 ),
-                navigationIcon = {Icon(Icons.Default.ArrowBack,"back")},
+                navigationIcon = {
+                    IconButton(onClick = {navController.navigateUp()}) {
+                        Icon(Icons.Default.ArrowBack,"back")}
+                    },
                 actions = {
                     IconButton(onClick = { }) {
                         Icon(Icons.Default.KeyboardArrowDown, "Create")
@@ -79,13 +109,15 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                 .fillMaxWidth()
                 .padding(it)
         ) {
-            Box(  modifier = Modifier
+            Box(modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)){
                 OutlinedTextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = "",
-                    onValueChange = {},
+                    value = state.title,
+                    onValueChange = {
+                        projectViewmodel.onEvent(ProjectEvent.ProjecTitleEntered(it))
+                    },
                     label = {
                         Text(
                             text = "Название",
@@ -109,6 +141,9 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple()
                     ) {
+                        scope.launch {
+                            colorSelectionSheetState.show()
+                        }
                     }) {
                     Box(
                         modifier = Modifier
@@ -126,14 +161,14 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                                 modifier = Modifier
                                     .size(24.dp)
                                     .padding(start = 4.dp),
-                                tint = Color.Gray
+                                tint = Color(state.color.color)
                             )
                             Spacer(modifier = Modifier.width(15.dp))
                             Column(
                                 modifier = Modifier.fillMaxHeight()
                             ) {
                                 Text(text = "Цвет", style = MaterialTheme.typography.body1)
-                                Text(text = "Аспидно-серый", style = MaterialTheme.typography.body1)
+                                Text(text = state.color.name, style = MaterialTheme.typography.body1)
                             }
                         }
                     }
@@ -145,6 +180,7 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple()
                     ) {
+                        isFavorite.value = !isFavorite.value
                     }) {
                     Box(
                         modifier = Modifier
@@ -161,7 +197,7 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                         ) {
                             Row() {
                                 Icon(
-                                    Icons.Default.Menu,
+                                    Icons.Default.Favorite,
                                     contentDescription = "Google",
                                     modifier = Modifier
                                         .size(24.dp)
@@ -172,8 +208,8 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                                 Text(text = "Избранное", style = MaterialTheme.typography.body1)
                             }
                             Switch(
-                                checked = true,
-                                onCheckedChange = { },
+                                checked = isFavorite.value,
+                                onCheckedChange = { isFavorite.value = !isFavorite.value},
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = Color(0xFF5E97FF),
                                     checkedTrackColor = Color(0xFFA0BCF0),
@@ -185,7 +221,28 @@ fun CreateProjectScreen(navController: NavController, projectViewmodel: ProjectV
                     }
                 }
             }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                enabled = state.title.isNotEmpty(),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color(0xFF5E97FF),
+                    contentColor = Color.White,
+                    disabledBackgroundColor = Color(0xFFA0BCF0)
+                ),
+                onClick = {
+                    projectViewmodel.onEvent(ProjectEvent.CreateProjectNetwork())
+                    navController.navigateUp()
+                }) { Text(text = "Создать проект", style = MaterialTheme.typography.body1) }
         }
+    }
+
+    ModalBottomSheetLayout(
+        sheetContent = {
+            ColorSelectionBottomSheetLayout(projectViewModel = projectViewmodel)
+        },
+        sheetState = colorSelectionSheetState
+    ) {
+
     }
 
 
