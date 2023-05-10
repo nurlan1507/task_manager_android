@@ -1,6 +1,8 @@
 package com.nurlan1507.task_manager_mobile.ui_components.main_screen.bottom_sheet_layouts
 
+import android.os.Build
 import android.widget.Space
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -66,6 +68,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainSc
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainBottomSheetLayout(navController: NavController,taskViewModel: TasksViewModel,sheetState: ModalBottomSheetState) {

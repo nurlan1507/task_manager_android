@@ -50,7 +50,7 @@ fun ProjectSelectionButton(projectId:Long, projectList:List<Project>, onProjectS
         }
     ){
         Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp)){
-            if(projectId.equals(11)){
+            if(projectId.toInt() == 11){
                 Icon(painter = painterResource(id = R.drawable.incoming_icon), contentDescription = "Срок выполнения", tint = Color.Unspecified)
                 Spacer(modifier = Modifier.width(3.dp))
                 Text(text = "Входящие" , style = MaterialTheme.typography.body2, color = Color.Gray)
@@ -82,7 +82,7 @@ fun ProjectSelectionButton(projectId:Long, projectList:List<Project>, onProjectS
                         .fillMaxHeight()
                         .fillMaxWidth()){
                         Row(modifier = Modifier.align(Alignment.CenterStart)) {
-                            if(project.projectId!!.equals(11)){
+                            if(project.projectId!!.toInt() == 11){
                                 Icon(
                                     painter = painterResource(id = R.drawable.incoming_icon),
                                     contentDescription = "Google",

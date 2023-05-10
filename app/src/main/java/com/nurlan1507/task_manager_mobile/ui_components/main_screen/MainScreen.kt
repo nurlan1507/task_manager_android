@@ -18,6 +18,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -63,6 +64,7 @@ import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectEvent
 import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksEvent
 import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
@@ -79,11 +81,13 @@ import com.nurlan1507.task_manager_mobile.utils.TokenManager
 import com.nurlan1507.task_manager_mobile.utils.WindowSize
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(
     ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class
+    ExperimentalComposeUiApi::class, ExperimentalFoundationApi::class
 )
 @SuppressLint(
     "UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState",
@@ -99,7 +103,7 @@ fun MainScreen(
     userViewModel: UserViewModel = hiltViewModel()
 ) {
     val ctx = LocalContext.current as Activity
-    val taskState = tasksViewModel.tasksState
+    val taskState = tasksViewModel.tasksState.value
     val projectState = projectViewmodel.projectState.value
     var showDialog by remember { mutableStateOf(false) }
 
@@ -142,10 +146,17 @@ fun MainScreen(
             modalSheetState2.hide()
         }
     }
-
+    val tasksByDate = remember {
+        mutableStateOf(mapOf<String, List<TaskWithProject>>())
+    }
     LaunchedEffect(projectState.currentProject) {
         tasksViewModel.onEvent(TasksEvent.GetTasks(1))
+
     }
+    tasksByDate.value = taskState.tasks.groupBy {
+        tasksViewModel.getDateCategory(it.task.finishDate ?: 0)
+    }
+    Log.d("LOX",tasksByDate.value.toString())
 
     BackHandler {
         if (modalSheetState2.isVisible) {
@@ -159,9 +170,7 @@ fun MainScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopBar<String>(title = taskState.value.currentCategory.title) {
-
-            }
+            TopBar(title = taskState.currentCategory.title)
         },
         bottomBar = {
             BottomNavigationBar(
@@ -235,17 +244,22 @@ fun MainScreen(
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(taskState.value.tasks) { task ->
-                    IncomeTaskView(
-                        deletedTask = taskState.value.deletedTask,
-                        taskWithProject = task,
-                        onDeleteButtonClicked = {
-                            tasksViewModel.onEvent(TasksEvent.DeleteTask(it))
-                        }
-                    )
-
+                tasksByDate.value.forEach { key, tasks ->
+                    item {
+                        Text(text = key, style = MaterialTheme.typography.body1, color = Color.Gray)
+                    }
+                    items(tasks) { task ->
+                        IncomeTaskView(
+                            deletedTask = taskState .deletedTask,
+                            taskWithProject = task,
+                            onDeleteButtonClicked = {
+                                tasksViewModel.onEvent(TasksEvent.DeleteTask(it))
+                            }
+                        )
+                    }
                 }
             }
+
         }
     }
     ModalBottomSheetLayout(
@@ -255,21 +269,21 @@ fun MainScreen(
                     is BottomSheetLayoutType.Profile -> {
                         Log.d("currentDestination", "main")
                         MainBottomSheetLayout(
-                            navController,tasksViewModel, modalSheetState
+                            navController, tasksViewModel, modalSheetState
                         )
                     }
 
                     is BottomSheetLayoutType.Nofifications -> {
                         Log.d("currentDestination", "notifications")
                         MainBottomSheetLayout(
-                            navController,tasksViewModel, modalSheetState
+                            navController, tasksViewModel, modalSheetState
                         )
                     }
 
                     is BottomSheetLayoutType.Search -> {
                         Log.d("currentDestination", "search")
                         MainBottomSheetLayout(
-                            navController,tasksViewModel, modalSheetState
+                            navController, tasksViewModel, modalSheetState
                         )
                     }
 

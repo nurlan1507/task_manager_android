@@ -25,7 +25,7 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 
 @Database(
     entities = [User::class, Project::class, Task::class],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class TaskManagerDatabase: RoomDatabase() {
@@ -34,8 +34,8 @@ abstract class TaskManagerDatabase: RoomDatabase() {
     abstract fun projectDao():ProjectDao
     companion object{
         const val DATABASE_NAME = "room_db"
-        @Volatile
-        private var INSTANCE: TaskManagerDatabase? = null
+//        @Volatile
+//        private var INSTANCE: TaskManagerDatabase? = null
 //        fun getDatabase(context: Context): TaskManagerDatabase {
 //            val tempInstance = INSTANCE
 //            if (tempInstance != null) {

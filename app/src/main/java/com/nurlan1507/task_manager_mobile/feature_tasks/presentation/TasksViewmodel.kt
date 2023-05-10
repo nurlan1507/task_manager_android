@@ -48,13 +48,14 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
 @HiltViewModel
 class TasksViewModel @Inject constructor(
     val repository: TasksRepositoryImpl,
-    val useCases: TasksUseCases
+    private val useCases: TasksUseCases
 ):ViewModel() {
 
     private val _tasksState = mutableStateOf(TasksState())
@@ -86,6 +87,17 @@ class TasksViewModel @Inject constructor(
             return listOf(followingSaturday,followingSunday)
         }
         return listOf(nextSaturday, nextSunday)
+    }
+
+
+
+    fun getDateCategory(date: Long): String {
+        val today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).epochSecond
+        return when {
+            date < today -> "Просрочено"
+            date == today -> "Сегодня"
+            else -> "Далее"
+        }
     }
 
 

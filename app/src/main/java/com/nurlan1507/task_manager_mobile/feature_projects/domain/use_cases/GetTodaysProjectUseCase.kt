@@ -10,7 +10,7 @@ import java.time.ZoneOffset
 class GetTodaysProjectUseCase(private val repository: ProjectRepositoryImpl) {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend operator fun invoke(){
-        val localDate = LocalDate.now().atTime(23,59).toInstant(ZoneOffset.UTC).epochSecond
+        val localDate = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).epochSecond
         val a = repository.getProjectsWithTasksDueToday(localDate)
         Log.d("todaytasks", a.toString())
     }

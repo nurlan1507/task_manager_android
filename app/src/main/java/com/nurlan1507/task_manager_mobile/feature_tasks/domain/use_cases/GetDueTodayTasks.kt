@@ -11,7 +11,7 @@ import java.time.ZoneOffset
 class GetDueTodayTasks(private val repository:TasksRepositoryImpl) {
     @RequiresApi(Build.VERSION_CODES.O)
     suspend operator fun invoke():List<TaskWithProject>{
-        val dueDate = LocalDate.now().atTime(23,59,0).toInstant(ZoneOffset.UTC).epochSecond
+        val dueDate = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).epochSecond
         Log.d("TodayDate",dueDate.toString())
         return repository.getTasksDueToday(dueDate)
     }

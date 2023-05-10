@@ -32,14 +32,17 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.nurlan1507.task_manager_mobile.feature_projects.presentation.ProjectViewmodel
+import com.nurlan1507.task_manager_mobile.feature_tasks.presentation.TasksViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun <T> TopBar(
+fun TopBar(
     title: String,
-    actionData: List<T> = listOf(),
-    action: @Composable() (T) -> Unit={}
+    projectViewModel:ProjectViewmodel = hiltViewModel(),
+    tasksViewModel: TasksViewModel = hiltViewModel()
     // TODO: support overflow menu here with the remainder of the list
 ){
     var menuExpanded by remember { mutableStateOf(false) }

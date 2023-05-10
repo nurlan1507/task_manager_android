@@ -103,7 +103,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple()
                 ) {
-                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atTime(23,59)?.toEpochSecond(ZoneOffset.UTC)))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atStartOfDay()?.toEpochSecond(ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
@@ -134,7 +134,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     indication = rememberRipple()
                 ) {
                     tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.Tomorrow))
-                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atTime(23,59)?.toEpochSecond(
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate(nextDayLocalDate?.atStartOfDay()?.toEpochSecond(
                         ZoneOffset.UTC)))
                 }) {
                 Row(
@@ -168,7 +168,7 @@ fun DateSelectionBottomSheetLayout(tasksViewModel: TasksViewModel) {
                     indication = rememberRipple()
                 ) {
                     tasksViewModel.onEvent(TasksEvent.ChangeDateSelectionOption(DateSelectionMenu.Weekend))
-                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate( weekend[1].atTime(23,59).toEpochSecond(ZoneOffset.UTC)))
+                    tasksViewModel.onEvent(TasksEvent.EnteredFinishDate( weekend[1].atStartOfDay().toEpochSecond(ZoneOffset.UTC)))
                 }) {
                 Row(
                     modifier = Modifier
