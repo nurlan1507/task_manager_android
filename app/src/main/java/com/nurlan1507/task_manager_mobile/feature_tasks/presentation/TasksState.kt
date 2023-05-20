@@ -13,7 +13,7 @@ data class TasksState (
     val dateSelectionOption: DateSelectionMenu? = null,
     val currentProject: ProjectWithTasks? = null,
     val projects:MutableList<Project> = mutableListOf(Project(projectId = 1, title = "Входящие", iconUrl = R.drawable.incoming_icon.toString()), Project(projectId = 22, title = "Работа",iconUrl = R.drawable.incoming_icon.toString())),
-    val tasks:List<TaskWithProject> = listOf<TaskWithProject>(),
+    var tasks:List<TaskWithProject> = listOf<TaskWithProject>(),
     val categorizedTasks:Map<String,List<TaskWithProject>> = mapOf(),
     val task: Task = Task(0),
     val deletedTask:Task?=null

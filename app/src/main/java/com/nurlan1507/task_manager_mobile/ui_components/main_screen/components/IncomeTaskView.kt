@@ -45,6 +45,7 @@ import java.util.Date
 
 @Composable
 fun IncomeTaskView(
+    modifier:Modifier,
     deletedTask:Task?,
     taskWithProject: TaskWithProject,
     onDeleteButtonClicked: (Task) -> Unit,

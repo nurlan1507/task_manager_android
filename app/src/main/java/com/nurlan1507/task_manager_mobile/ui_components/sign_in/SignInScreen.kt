@@ -72,9 +72,8 @@ fun SignInScreen(userViewModel: UserViewModel = hiltViewModel(),projectViewModel
                 launchSingleTop = true
             }
         }else if(state.apiCallResult == 400){
-            Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
+
         }else{
-            Toast.makeText(ctx, "Failure", Toast.LENGTH_LONG).show()
         }
     }
 

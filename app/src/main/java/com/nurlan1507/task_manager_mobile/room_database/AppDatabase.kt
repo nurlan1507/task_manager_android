@@ -25,7 +25,7 @@ import com.nurlan1507.task_manager_mobile.feature_users.domain.models.User
 
 @Database(
     entities = [User::class, Project::class, Task::class],
-    version = 8,
+    version = 1,
     exportSchema = false
 )
 abstract class TaskManagerDatabase: RoomDatabase() {

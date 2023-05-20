@@ -2,7 +2,9 @@
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +15,7 @@ import com.nurlan1507.task_manager_mobile.ui_components.main_screen.DateSelectio
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.MainScreen
 import com.nurlan1507.task_manager_mobile.feature_users.presentation.UserViewModel
 import com.nurlan1507.task_manager_mobile.ui_components.create_project_screen.CreateProjectScreen
+import com.nurlan1507.task_manager_mobile.ui_components.draggable.DragableScreen
 import com.nurlan1507.task_manager_mobile.ui_components.sign_in.SignInScreen
 import com.nurlan1507.task_manager_mobile.utils.Screen
 import com.nurlan1507.task_manager_mobile.utils.rememberWindowSize
@@ -32,7 +35,9 @@ fun Navigation(){
             SignInScreen(window = window, navController = navController)
         }
         composable(Screen.MainScreen.route){
-            MainScreen(navController = navController, windowSize =window)
+            DragableScreen() {
+                MainScreen(navController = navController, windowSize =window)
+            }
         }
         composable(Screen.DateSelectionScreen.route){
             DateSelectionScreen()

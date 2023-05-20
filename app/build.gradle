@@ -74,7 +74,7 @@ dependencies {
 
 
     //DI
-    def hilt_version = "2.39.1"
+    def hilt_version = "2.44"
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
@@ -110,5 +110,11 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+
+
+    //dragable
+//    implementation 'com.google.accompanist:accompanist-draggable:0.18.0'
+    implementation("org.burnoutcrew.composereorderable:reorderable:0.9.5")
+
 
 }

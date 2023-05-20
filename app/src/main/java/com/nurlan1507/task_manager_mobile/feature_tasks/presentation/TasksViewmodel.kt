@@ -49,6 +49,7 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAdjusters
 import javax.inject.Inject
 
@@ -59,7 +60,7 @@ class TasksViewModel @Inject constructor(
 ):ViewModel() {
 
     private val _tasksState = mutableStateOf(TasksState())
-    val tasksState: State<TasksState> = _tasksState
+    var tasksState= _tasksState
 
     private var _fieldState = mutableStateOf(TasksTextFieldState())
     var fieldState:State<TasksTextFieldState> = _fieldState
@@ -89,14 +90,31 @@ class TasksViewModel @Inject constructor(
         return listOf(nextSaturday, nextSunday)
     }
 
+    data class TaskDate(
+        val name:String,
+        val time:Long
+    )
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun convertEpochSecondsToDDMM(epochSeconds: Long): String {
+        val instant = Instant.ofEpochSecond(epochSeconds)
+        val formatter = DateTimeFormatter.ofPattern("dd MM")
+            .withZone(ZoneId.systemDefault())
+        return formatter.format(instant)
+    }
 
 
-    fun getDateCategory(date: Long): String {
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getDateCategory(date: Long): TaskDate {
         val today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).epochSecond
         return when {
-            date < today -> "Просрочено"
-            date == today -> "Сегодня"
-            else -> "Далее"
+            date < today -> TaskDate("Просрочено", today)
+            date == today -> TaskDate("Сегодня", today)
+            else -> {
+                val instant =  Instant.ofEpochSecond(today).atZone(ZoneId.systemDefault()).toLocalDate()
+                val dayOfWeek = instant.dayOfWeek
+                val dayOfMonth = instant.dayOfMonth
+                return TaskDate(convertEpochSecondsToDDMM(today), today)
+            }
         }
     }
 
