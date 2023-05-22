@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -143,8 +144,8 @@ fun MainScreen(
     val tasksByDate = remember {
         mutableStateOf(mapOf<TasksViewModel.TaskDate, List<TaskWithProject>>())
     }
-    LaunchedEffect(projectState.currentProject) {
-        tasksViewModel.onEvent(TasksEvent.GetTasks(1))
+    LaunchedEffect(Unit) {
+        tasksViewModel.onEvent(TasksEvent.GetTasks(2))
     }
     tasksByDate.value = taskState.tasks.groupBy {
         tasksViewModel.getDateCategory(it.task.finishDate ?: 0)
@@ -232,55 +233,15 @@ fun MainScreen(
                 }
             )
         }
-        //for dragging
-//        var isDragging by remember { mutableStateOf(false) }
-//        var dragOffset by remember { mutableStateOf(0F) }
-//        var dropZoneColor by remember { mutableStateOf(Color.Transparent) }
-//
-//        val calculatedOffset by remember { mutableStateOf<Float?>(null) }
-//
-//        val state = rememberReorderableLazyListState(onMove = { from, to ->
-//            tasksViewModel.tasksState.value = tasksViewModel.tasksState.value.copy(
-//                tasks = tasksViewModel.tasksState.value.tasks.toMutableList().apply {
-//                    add(to.index, removeAt(from.index))
-//                })
-//        })
 
-//        Column() {
-//            LazyColumn(){
-//                items(tasksViewModel.tasksState.value.tasks){item->
-//                    DragTarget(modifier =Modifier  , dataToDrop = item) {
-//                        IncomeTaskView(
-//                            modifier =Modifier ,
-//                            deletedTask = taskState .deletedTask,
-//                            taskWithProject = item,
-//                            onDeleteButtonClicked = {
-//                                tasksViewModel.onEvent(TasksEvent.DeleteTask(it))
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-//
-//            Spacer(modifier = Modifier.height(20.dp))
-//            DropItem<TaskWithProject>(modifier = Modifier.size(100.dp))
-//            {isBound,data ->
-//                if(isBound==true){
-//                    Box(modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Red))
-//            }else{
-//                    Box(modifier = Modifier
-//                        .fillMaxSize()
-//                        .background(Color.Red))
-//                }
-//        }
-        Column(modifier = Modifier
-            .padding(it)
+        Column(
+            modifier = Modifier
+                .padding(it)
         ) {
-            TasksBlock(tasksMap = tasksByDate.value)
+            TasksBlocks(tasksMap = tasksByDate.value)
         }
     }
+    Log.d("dragState", tasksByDate.value.keys.toString())
     ModalBottomSheetLayout(
         sheetContent = {
             Column(modifier = Modifier.heightIn(min = 1.dp)) {
@@ -332,24 +293,63 @@ fun MainScreen(
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TasksBlock(tasksMap: Map<TasksViewModel.TaskDate, List<TaskWithProject>>) {
+fun TasksBlocks(
+    tasksMap: Map<TasksViewModel.TaskDate, List<TaskWithProject>>,
+    taskViewModel: TasksViewModel = hiltViewModel()
+) {
     LazyColumn {
         items(tasksMap.entries.toList()) { (taskDate, taskList) ->
-            TaskBlock(taskDate, taskList)
+            DropItem<TaskWithProject>(modifier = Modifier.wrapContentSize()) { isBound, item ->
+                    LaunchedEffect(item) {
+                        if(item!=null){
+
+                            if(taskDate.name == "Просрочено"){
+
+                            }else{
+                                if(item.task.finishDate == taskDate.time) {
+                                    Log.d("dragState", "не буду")
+
+                                }else{
+                                    taskViewModel.onEvent(TasksEvent.AssignADraggableItem(item, taskDate.time))
+//                                    taskViewModel.onEvent(TasksEvent.TaskDragEvent(item, taskDate.time))
+                                }
+                            }
+
+                        }
+
+                    }
+                Box(modifier = Modifier
+                    .wrapContentSize()
+                    .background(if (isBound) Color.LightGray else Color.White)) {
+                    TaskBlockList(taskDate, taskList) {}
+                }
+            }
         }
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun TaskBlock(taskDate: TasksViewModel.TaskDate, taskList: List<TaskWithProject>) {
-    Text(text = taskDate.name)
-    taskList.forEach { task ->
-        IncomeTaskView(
-            modifier = Modifier,
-            taskWithProject =task ,
-            onDeleteButtonClicked = {},
-            deletedTask = null
-        )
+fun TaskBlockList(
+    taskDate: TasksViewModel.TaskDate,
+    taskList: List<TaskWithProject>,
+    onItemDragged: () -> Unit
+) {
+    Column() {
+        Text(text = taskDate.name)
+        taskList.forEach { task ->
+            DragTarget(dataToDrop = task) {
+                IncomeTaskView(
+                    modifier = Modifier,
+                    taskWithProject = task,
+                    onDeleteButtonClicked = {},
+                    deletedTask = null
+                )
+            }
+        }
     }
+
 }
+

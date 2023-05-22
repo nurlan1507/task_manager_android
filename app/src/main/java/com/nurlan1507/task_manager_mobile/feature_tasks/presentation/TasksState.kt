@@ -1,5 +1,7 @@
 package com.nurlan1507.task_manager_mobile.feature_tasks.presentation
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.nurlan1507.task_manager_mobile.R
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.ProjectWithTasks
@@ -16,6 +18,13 @@ data class TasksState (
     var tasks:List<TaskWithProject> = listOf<TaskWithProject>(),
     val categorizedTasks:Map<String,List<TaskWithProject>> = mapOf(),
     val task: Task = Task(0),
-    val deletedTask:Task?=null
+    val currentDragItem:CurrentDragItem? = null,
+    val deletedTask:Task?=null,
+    val isCurrentlyDragging: Boolean = false
 
+)
+
+data class CurrentDragItem(
+    val task:TaskWithProject,
+    val data:Long
 )

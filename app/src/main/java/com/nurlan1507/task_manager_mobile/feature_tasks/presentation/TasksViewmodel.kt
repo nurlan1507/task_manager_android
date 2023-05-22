@@ -57,47 +57,48 @@ import javax.inject.Inject
 class TasksViewModel @Inject constructor(
     val repository: TasksRepositoryImpl,
     private val useCases: TasksUseCases
-):ViewModel() {
+) : ViewModel() {
 
     private val _tasksState = mutableStateOf(TasksState())
-    var tasksState= _tasksState
+    var tasksState = _tasksState
 
     private var _fieldState = mutableStateOf(TasksTextFieldState())
-    var fieldState:State<TasksTextFieldState> = _fieldState
+    var fieldState: State<TasksTextFieldState> = _fieldState
 
     private var _currentBottomSheetLayout = mutableStateOf<BottomSheetLayoutType?>(null)
-    val currentBottomSheetLayout:State<BottomSheetLayoutType?> = _currentBottomSheetLayout
+    val currentBottomSheetLayout: State<BottomSheetLayoutType?> = _currentBottomSheetLayout
 
     private var _error = mutableStateOf(false)
     var error: MutableState<Boolean> = _error
 
     private var _callResult = mutableStateOf(ResponseModel())
-    val callResult:State<ResponseModel> = _callResult
+    val callResult: State<ResponseModel> = _callResult
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun getNextWeekendDays(): List<LocalDate> {
         val today = fieldState.value.finishDate.let {
-            if(it!=null) Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()).toLocalDate()
+            if (it != null) Instant.ofEpochSecond(it).atZone(ZoneId.systemDefault()).toLocalDate()
             else LocalDate.now()
         }
         val nextSaturday = today.with(TemporalAdjusters.next(DayOfWeek.SATURDAY))
         val nextSunday = today.with(TemporalAdjusters.next(DayOfWeek.SUNDAY))
-        if(today.dayOfMonth > nextSaturday.dayOfMonth || today.dayOfMonth > nextSunday.dayOfMonth){
+        if (today.dayOfMonth > nextSaturday.dayOfMonth || today.dayOfMonth > nextSunday.dayOfMonth) {
             val followingSaturday = nextSaturday.plusWeeks(1)
             val followingSunday = nextSunday.plusWeeks(1)
-            return listOf(followingSaturday,followingSunday)
+            return listOf(followingSaturday, followingSunday)
         }
         return listOf(nextSaturday, nextSunday)
     }
 
     data class TaskDate(
-        val name:String,
-        val time:Long
+        val name: String,
+        val time: Long
     )
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun convertEpochSecondsToDDMM(epochSeconds: Long): String {
         val instant = Instant.ofEpochSecond(epochSeconds)
-        val formatter = DateTimeFormatter.ofPattern("dd MM")
+        val formatter = DateTimeFormatter.ofPattern("dd MMM")
             .withZone(ZoneId.systemDefault())
         return formatter.format(instant)
     }
@@ -108,76 +109,95 @@ class TasksViewModel @Inject constructor(
         val today = LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC).epochSecond
         return when {
             date < today -> TaskDate("Просрочено", today)
-            date == today -> TaskDate("Сегодня", today)
+//            date == today -> TaskDate("Сегодня", today)
             else -> {
-                val instant =  Instant.ofEpochSecond(today).atZone(ZoneId.systemDefault()).toLocalDate()
-                val dayOfWeek = instant.dayOfWeek
-                val dayOfMonth = instant.dayOfMonth
-                return TaskDate(convertEpochSecondsToDDMM(today), today)
+                return TaskDate(convertEpochSecondsToDDMM(date), date)
             }
         }
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun onEvent(event: TasksEvent){
-        when(event){
-            is TasksEvent.ChangeCategory ->{
+    fun onEvent(event: TasksEvent) {
+        when (event) {
+            is TasksEvent.ChangeCategory -> {
                 viewModelScope.launch {
                     _tasksState.value = _tasksState.value.copy(currentCategory = event.category)
                 }
             }
-            is TasksEvent.EnteredTitle ->{
+
+            is TasksEvent.EnteredTitle -> {
                 _fieldState.value = _fieldState.value.copy(title = event.value)
             }
-            is TasksEvent.EnteredDescription->{
+
+            is TasksEvent.EnteredDescription -> {
                 _fieldState.value = _fieldState.value.copy(description = event.value)
             }
-            is TasksEvent.EnteredFinishDate->{
+
+            is TasksEvent.EnteredFinishDate -> {
                 _fieldState.value = _fieldState.value.copy(finishDate = event.value)
             }
-            is TasksEvent.EnteredProjectId->{
+
+            is TasksEvent.EnteredProjectId -> {
                 _fieldState.value = _fieldState.value.copy(projectId = event.value)
             }
-            is TasksEvent.ClearTextFieldState->{
+
+            is TasksEvent.ClearTextFieldState -> {
                 _fieldState.value = TasksTextFieldState()
             }
-            is TasksEvent.ChangeBottomSheetDestination ->{
+
+            is TasksEvent.ChangeBottomSheetDestination -> {
                 _currentBottomSheetLayout.value = event.type
             }
+
             is TasksEvent.ValidateTextFields -> {
-                if(_fieldState.value.title.isNotEmpty()){
+                if (_fieldState.value.title.isNotEmpty()) {
                     _error.value
                 }
             }
-            is TasksEvent.ChangeDateSelectionOption ->{
+
+            is TasksEvent.ChangeDateSelectionOption -> {
                 _tasksState.value = _tasksState.value.copy(dateSelectionOption = event.type)
             }
+
             is TasksEvent.CreateTask -> {
                 viewModelScope.launch {
-                    val task = Task(title = _fieldState.value.title, description = _fieldState.value.description, finishDate = _fieldState.value.finishDate, projectId = _fieldState.value.projectId)
+                    val task = Task(
+                        title = _fieldState.value.title,
+                        description = _fieldState.value.description,
+                        finishDate = _fieldState.value.finishDate,
+                        projectId = _fieldState.value.projectId
+                    )
                     val netWorkResult = useCases.createTaskNetworkUseCase(task = task)
-                    if(netWorkResult.code!=200){
+                    if (netWorkResult.code != 200) {
                         _callResult.value = _callResult.value.copy(
                             code = netWorkResult.code,
                             message = netWorkResult.message
                         )
+                        Log.d("APiError", _callResult.value.message.toString())
                         return@launch
                     }
                     val newTask = useCases.createTaskUseCase(task)
-                    if(_tasksState.value.tasks.isNotEmpty() && newTask.projectId == _tasksState.value.tasks[0].project.projectId){
+                    if (_tasksState.value.tasks.isNotEmpty() && newTask.projectId == _tasksState.value.tasks[0].project.projectId) {
                         val projectInfo = _tasksState.value.tasks[0].project
                         val newTaskWithProjectInstance = TaskWithProject(
-                            project = Project(projectId = projectInfo.projectId, title = projectInfo.title, iconUrl = projectInfo.iconUrl, userId = projectInfo.userId),
+                            project = Project(
+                                projectId = projectInfo.projectId,
+                                title = projectInfo.title,
+                                iconUrl = projectInfo.iconUrl,
+                                userId = projectInfo.userId
+                            ),
                             task = newTask
                         )
                         val list = listOf(newTaskWithProjectInstance)
 //                        _tasksState.value.tasks.toMutableList().add(newTaskWithProjectInstance)
-                        _tasksState.value = _tasksState.value.copy(tasks = _tasksState.value.tasks + list)
+                        _tasksState.value =
+                            _tasksState.value.copy(tasks = _tasksState.value.tasks + list)
                     }
                     _fieldState.value = TasksTextFieldState()
                 }
             }
+
             is TasksEvent.GetTasks -> {
                 viewModelScope.launch {
 //                    val projectId = event.projectId
@@ -190,19 +210,60 @@ class TasksViewModel @Inject constructor(
 //
 //                        }
 //                    }
-                    val projectTasks = useCases.getTasksUseCase(1)
+                    val projectTasks = useCases.getTasksUseCase(event.projectId)
                     Log.d("projectTasks", projectTasks.toString())
                     _tasksState.value = _tasksState.value.copy(tasks = projectTasks)
                 }
             }
-            is TasksEvent.DeleteTask ->{
+
+            is TasksEvent.DeleteTask -> {
                 viewModelScope.launch {
                     _tasksState.value = _tasksState.value.copy(deletedTask = event.task)
                     delay(300)
                     useCases.deleteTaskUseCase(task = event.task)
-                    _tasksState.value = _tasksState.value.copy(tasks = _tasksState.value.tasks.filterNot{
-                            item -> item.task == event.task
-                    })
+                    _tasksState.value =
+                        _tasksState.value.copy(tasks = _tasksState.value.tasks.filterNot { item ->
+                            item.task == event.task
+                        })
+                }
+            }
+
+            is TasksEvent.StartDragging -> {
+                _tasksState.value = _tasksState.value.copy(isCurrentlyDragging = true)
+            }
+
+            is TasksEvent.StopDragging -> {
+                _tasksState.value = _tasksState.value.copy(isCurrentlyDragging = false)
+            }
+
+            is TasksEvent.AssignADraggableItem -> {
+                _tasksState.value = _tasksState.value.copy(
+                    currentDragItem = CurrentDragItem(
+                        task = event.item,
+                        data = event.date
+                    )
+                )
+            }
+
+            is TasksEvent.TaskDragEvent -> {
+                viewModelScope.launch {
+                    val taskToDrag = _tasksState.value.currentDragItem
+                    if (taskToDrag != null) {
+                        val index = _tasksState.value.tasks.indexOfFirst {
+                            it.task.taskId == taskToDrag.task.task.taskId
+                        }
+                        if (index != -1) {
+                            val newList = _tasksState.value.tasks.toMutableList()
+                            newList.removeAt(index)
+                            val editedTask = taskToDrag.task.copy(
+                                task = taskToDrag.task.task.copy(finishDate = taskToDrag.data),
+                                project = taskToDrag.task.project
+                            )
+                            newList.add(index, editedTask)
+                            _tasksState.value = _tasksState.value.copy(tasks = newList)
+                        }
+                    }
+                    _tasksState.value = _tasksState.value.copy(currentDragItem = null)
                 }
             }
         }

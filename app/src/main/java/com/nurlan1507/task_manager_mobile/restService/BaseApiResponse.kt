@@ -9,9 +9,7 @@ abstract class BaseApiResponse {
         try {
             val response = api()
             val body =response.body()
-            Log.d("apiError",body.toString()    )
             val errorBody = response.errorBody()?.string()
-            Log.d("googleAuthRBody", response.message())
             if(response.isSuccessful){
                 val headers = response.headers()
                 body?.let {

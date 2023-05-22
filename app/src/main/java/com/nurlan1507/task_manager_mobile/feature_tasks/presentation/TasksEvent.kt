@@ -2,6 +2,7 @@ package com.nurlan1507.task_manager_mobile.feature_tasks.presentation
 
 import com.nurlan1507.task_manager_mobile.feature_projects.domain.models.Project
 import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.Task
+import com.nurlan1507.task_manager_mobile.feature_tasks.domain.models.TaskWithProject
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.BottomSheetLayoutType
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.DateSelectionMenu
 import com.nurlan1507.task_manager_mobile.ui_components.main_screen.utils.MainScreenNavigationOption
@@ -25,4 +26,9 @@ sealed class TasksEvent {
     data class GetTasks(val projectId:Int):TasksEvent()
 
     data class DeleteTask(val task: Task):TasksEvent()
+
+    object TaskDragEvent:TasksEvent()
+    data class AssignADraggableItem(val item:TaskWithProject, val date:Long):TasksEvent()
+    object StartDragging:TasksEvent()
+    object StopDragging:TasksEvent()
 }
